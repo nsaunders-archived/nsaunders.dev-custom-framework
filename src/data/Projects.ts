@@ -11,7 +11,8 @@ export async function list() {
   const $ = cheerio.load(html);
   return $(".pinned-item-list-item-content")
     .map(function () {
-      const owner: string = $(this).find("a .owner").text().trim() || username;
+      const owner: string =
+        $(this).find("a .owner").text().trim().replace(/\/$/, "") || username;
       const name: string = $(this).find("a .repo").text().trim();
       const description: string = $(this)
         .find(".pinned-item-desc")
