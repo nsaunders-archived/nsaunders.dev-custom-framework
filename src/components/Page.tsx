@@ -15,6 +15,7 @@ export default function ({ children, cookie, path, store }: Props) {
   return (
     <html data-theme={theme} style={{ overflowY: "scroll" }}>
       <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <base href={path.endsWith("/") ? path : `${path}/`} />
         <script src="/assets/htmx.js" defer></script>
         <link rel="stylesheet" href="/assets/normalize.css" />
@@ -44,7 +45,7 @@ export default function ({ children, cookie, path, store }: Props) {
         {store.environment === "development" ? (
           <script>{`
             (function () {
-              var ws = new WebSocket("ws://localhost:3000/development");
+              var ws = new WebSocket("ws" + (location.protocol === "https:" ? "s" : "") + "://" + location.host + "/development");
               ws.onclose = function() {
                 setTimeout(function() {
                   location.reload();
