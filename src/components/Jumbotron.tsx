@@ -14,7 +14,7 @@ export default function ({ headline, children }: Props) {
         fontSize: "1.5em",
         padding: "2em",
         dark: {
-          background: V.gray70,
+          background: V.gray80,
         },
       })}
     >
