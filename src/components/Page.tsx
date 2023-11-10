@@ -8,13 +8,12 @@ export type Props = Parameters<typeof PageHeader>[0] & {
   store: {
     environment: "development" | "production";
   };
-  children: string | Promise<string>;
-};
+} & JSX.ElementChildrenAttribute;
 
 export default function ({ children, cookie, path, store }: Props) {
   const theme = cookie.themePreference.value || Theme.defaultOption;
   return (
-    <html data-theme={theme}>
+    <html data-theme={theme} style={{ overflowY: "scroll" }}>
       <head>
         <base href={path.endsWith("/") ? path : `${path}/`} />
         <script src="/assets/htmx.js" defer></script>
