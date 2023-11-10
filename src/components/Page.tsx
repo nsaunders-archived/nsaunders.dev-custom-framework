@@ -1,0 +1,60 @@
+import * as V from "varsace";
+import * as Theme from "../data/Theme";
+import hooks, { css as hooksCSS } from "../css-hooks";
+import PageHeader from "./PageHeader";
+import PageFooter from "./PageFooter";
+
+export type Props = Parameters<typeof PageHeader>[0] & {
+  store: {
+    environment: "development" | "production";
+  };
+  children: string | Promise<string>;
+};
+
+export default function ({ children, cookie, path, store }: Props) {
+  const theme = cookie.themePreference.value || Theme.defaultOption;
+  return (
+    <html data-theme={theme}>
+      <head>
+        <base href={path.endsWith("/") ? path : `${path}/`} />
+        <script src="/assets/htmx.js" defer></script>
+        <link rel="stylesheet" href="/assets/normalize.css" />
+        <link rel="stylesheet" href="/assets/onest.css" />
+        <link rel="stylesheet" href="/assets/montserrat.css" />
+        <link rel="stylesheet" href="/assets/inconsolata.css" />
+        <link rel="stylesheet" href="/assets/prism.css" />
+        <style>{hooksCSS}</style>
+      </head>
+      <body
+        hx-boost="true"
+        style={hooks({
+          fontFamily: "'Onest Variable', sans-serif",
+          margin: 0,
+          minHeight: "100dvh",
+          display: "flex",
+          flexDirection: "column",
+          lineHeight: 1.25,
+          background: V.white,
+          color: V.black,
+          dark: { background: V.gray90, color: V.white },
+        })}
+      >
+        <PageHeader cookie={cookie} path={path} />
+        <div style={{ marginBottom: "2em" }}>{children}</div>
+        <PageFooter style={{ marginTop: "auto" }} />
+        {store.environment === "development" ? (
+          <script>{`
+            (function () {
+              var ws = new WebSocket("ws://localhost:3000/development");
+              ws.onclose = function() {
+                setTimeout(function() {
+                  location.reload();
+                }, 1000);
+              };
+            })();
+          `}</script>
+        ) : undefined}
+      </body>
+    </html>
+  );
+}
