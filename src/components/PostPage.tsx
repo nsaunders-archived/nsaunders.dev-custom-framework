@@ -13,6 +13,7 @@ import FormatReadingTime from "./FormatReadingTime";
 import FormatDate from "./FormatDate";
 import LabelValuePair from "./LabelValuePair";
 import ScreenReaderOnly from "./ScreenReaderOnly";
+import A from "./A";
 
 export type Props = O.Omit<Parameters<typeof Page>[0], "children"> & {
   params: { name: string };
@@ -23,7 +24,15 @@ export default async function ({ params: { name }, ...pageProps }: Props) {
   if (!post) {
     throw new NotFoundError("The requested post does not exist.");
   }
-  const { title, description, published, readingTime, content } = post;
+  const {
+    title,
+    description,
+    published,
+    readingTime,
+    content,
+    discussionHref,
+    editHref,
+  } = post;
   return (
     <Page {...pageProps}>
       <main style={{ display: "flex", flexDirection: "column", gap: "2em" }}>
@@ -63,6 +72,13 @@ export default async function ({ params: { name }, ...pageProps }: Props) {
         </Jumbotron>
         <BlockSection>
           <Markdown>{content}</Markdown>
+          <div
+            style={{ display: "flex", gap: "0.5em", marginBlockStart: "2em" }}
+          >
+            <A href={discussionHref}>Discuss this post</A>
+            <span style={{ color: V.gray50 }}>|</span>
+            <A href={editHref}>Suggest an edit</A>
+          </div>
         </BlockSection>
       </main>
     </Page>

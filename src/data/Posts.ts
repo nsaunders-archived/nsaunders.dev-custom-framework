@@ -40,5 +40,9 @@ export async function getByName(name: string) {
     ...post,
     baseHref: `https://github.com/nsaunders/writing/raw/master/posts/${name}/`,
     content,
+    discussionHref: `https://x.com/search?q=${encodeURIComponent(
+      `https://nsaunders.dev/posts/${name}`,
+    )}`,
+    editHref: `https://github.com/nsaunders/writing/edit/master/posts/${name}/index.md`,
   };
 }
