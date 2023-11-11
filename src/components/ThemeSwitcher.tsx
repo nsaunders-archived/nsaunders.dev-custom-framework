@@ -3,7 +3,7 @@
 import * as Theme from "../data/Theme";
 import SunIcon from "./SunIcon";
 import MoonIcon from "./MoonIcon";
-import * as V from "varsace";
+import * as V from "../vars";
 import hooks from "../css-hooks";
 
 type Props = {

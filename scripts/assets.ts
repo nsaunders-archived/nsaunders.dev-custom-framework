@@ -1,7 +1,6 @@
 import fs from "fs/promises";
 import path from "path";
 import * as CSS from "lightningcss";
-import * as V from "varsace/defaults";
 
 const assets = path.resolve(import.meta.dir, "..", "assets");
 

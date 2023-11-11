@@ -3,7 +3,7 @@ import A from "./A";
 import FormatDate from "./FormatDate";
 import FormatReadingTime from "./FormatReadingTime";
 import hooks from "../css-hooks";
-import * as V from "varsace";
+import * as V from "../vars";
 
 export type Props = {
   children: Awaited<ReturnType<typeof Posts.list>>[number];

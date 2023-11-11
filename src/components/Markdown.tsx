@@ -1,6 +1,6 @@
 import { marked, RendererObject } from "marked";
 import A from "./A";
-import * as V from "varsace";
+import * as V from "../vars";
 import hooks from "../css-hooks";
 import * as Prism from "prismjs";
 import LinkIcon from "./LinkIcon";

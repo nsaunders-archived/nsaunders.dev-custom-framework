@@ -1,4 +1,4 @@
-import * as V from "varsace";
+import * as V from "../vars";
 import * as Theme from "../data/Theme";
 import hooks, { css as hooksCSS } from "../css-hooks";
 import PageHeader from "./PageHeader";

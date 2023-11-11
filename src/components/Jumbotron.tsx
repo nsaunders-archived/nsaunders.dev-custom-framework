@@ -1,4 +1,4 @@
-import * as V from "varsace";
+import * as V from "../vars";
 import hooks from "../css-hooks";
 import BlockSection from "./BlockSection";
 

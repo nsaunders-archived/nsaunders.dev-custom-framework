@@ -1,5 +1,5 @@
 import { O } from "ts-toolbelt";
-import * as V from "varsace";
+import * as V from "../vars";
 import Page from "./Page";
 import Jumbotron from "./Jumbotron";
 import BlockSection from "./BlockSection";

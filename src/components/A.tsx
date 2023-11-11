@@ -1,7 +1,7 @@
 import hooks from "../css-hooks";
-import * as V from "varsace";
+import * as V from "../vars";
 import * as CSS from "csstype";
-import { O, U } from "ts-toolbelt";
+import { O } from "ts-toolbelt";
 
 export type Props = O.Omit<
   {
