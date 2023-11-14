@@ -1,10 +1,15 @@
 {
-  "extends": "@tsconfig/bun",
+  "extends": "@tsconfig/strictest",
   "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "Bundler",
+    "target": "esnext",
+    "lib": ["esnext"],
     "jsx": "react",
     "jsxFactory": "Html.createElement",
     "jsxFragmentFactory": "Html.Fragment",
-    "plugins": [{ "name": "@kitajs/ts-html-plugin" }]
+    "plugins": [{ "name": "@kitajs/ts-html-plugin" }],
+    "types": ["@cloudflare/workers-types/2023-07-01"]
   },
   "include": ["scripts", "src"]
 }

@@ -1,3 +1,5 @@
+/// <reference path="../node_modules/bun-types/types.d.ts" />
+
 import fs from "fs/promises";
 import path from "path";
 import * as CSS from "lightningcss";
@@ -19,7 +21,7 @@ await Promise.all(
     "onest.css": require.resolve("@fontsource-variable/onest"),
     "montserrat.css": require.resolve("@fontsource-variable/montserrat"),
     "inconsolata.css": require.resolve("@fontsource-variable/inconsolata"),
-    "prism.css": require.resolve("prism-theme-vars/base.css"),
+    "global.css": require.resolve("../src/global.css"),
   }).map(async ([filename, source]) => {
     const { code, map } = await CSS.transform({
       filename,

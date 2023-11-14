@@ -4,35 +4,32 @@
   "scripts": {
     "postinstall": "bun run scripts/assets.ts",
     "test": "xss-scan",
-    "dev": "bun run --watch src/index.tsx"
+    "dev": "SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt wrangler dev --live-reload"
   },
   "dependencies": {
     "@css-hooks/core": "^1.2.1",
-    "@elysiajs/html": "^0.7.3",
-    "@elysiajs/static": "^0.7.1",
     "@fontsource-variable/inconsolata": "^5.0.15",
+    "@types/http-errors": "^2.0.4",
     "cheerio": "^1.0.0-rc.12",
     "date-fns": "^2.30.0",
-    "elysia": "latest",
-    "gray-matter": "^4.0.3",
+    "front-matter": "^4.0.2",
+    "http-errors": "^2.0.0",
     "marked": "^9.1.5",
-    "prismjs": "^1.29.0",
-    "react": "^18.2.0",
+    "shikiji": "^0.6.12",
     "slug": "^8.2.3",
-    "varsace": "^0.1.0"
+    "varsace": "^0.2.0"
   },
   "devDependencies": {
+    "@cloudflare/kv-asset-handler": "^0.3.0",
+    "@cloudflare/workers-types": "^4.20231025.0",
     "@fontsource-variable/montserrat": "^5.0.16",
     "@fontsource-variable/onest": "^5.0.1",
-    "@tsconfig/bun": "^1.0.1",
-    "@types/prismjs": "^1.26.3",
+    "@tsconfig/strictest": "^2.0.2",
     "@types/slug": "^5.0.7",
-    "bun-types": "latest",
+    "bun-types": "^1.0.11",
     "htmx.org": "^1.9.7",
     "lightningcss": "^1.22.0",
     "modern-normalize": "^2.0.0",
-    "prism-theme-vars": "^0.2.4",
     "ts-toolbelt": "^9.6.0"
-  },
-  "module": "src/index.js"
+  }
 }
