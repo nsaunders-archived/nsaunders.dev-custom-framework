@@ -3,7 +3,6 @@
   "version": "1.0.50",
   "scripts": {
     "postinstall": "bun run scripts/assets.ts",
-    "test": "xss-scan",
     "dev": "SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt wrangler dev --live-reload"
   },
   "dependencies": {
