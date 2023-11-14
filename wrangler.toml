@@ -1,0 +1,7 @@
+name = "nsaunders-dev"
+main = "src/index.tsx"
+compatibility_date = "2023-07-01"
+compatibility_flags = [ "nodejs_compat" ]
+
+[site]
+bucket = "./assets"

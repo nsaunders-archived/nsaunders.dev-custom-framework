@@ -1,1 +1,1 @@
-export * from "varsace/defaults";
+export * from "varsace";

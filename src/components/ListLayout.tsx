@@ -1,3 +1,5 @@
+import { Html } from "@kitajs/html";
+
 export type Props = {
   title?: JSX.ElementChildrenAttribute["children"];
 } & JSX.ElementChildrenAttribute;

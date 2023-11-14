@@ -1,3 +1,4 @@
+import { Html } from "@kitajs/html";
 import withIcon from "./withIcon";
 
 export default withIcon(() => (

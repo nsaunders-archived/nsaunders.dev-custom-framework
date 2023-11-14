@@ -1,3 +1,4 @@
+import { Html } from "@kitajs/html";
 import * as CSS from "csstype";
 
 export type Props = {

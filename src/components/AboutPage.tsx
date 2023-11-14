@@ -1,8 +1,8 @@
+import { Html } from "@kitajs/html";
 import { O } from "ts-toolbelt";
 import * as Pages from "../data/Pages";
 import Page from "./Page";
 import Jumbotron from "./Jumbotron";
-import { InternalServerError } from "elysia";
 import Markdown from "./Markdown";
 import BlockSection from "./BlockSection";
 

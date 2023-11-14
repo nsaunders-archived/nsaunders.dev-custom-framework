@@ -1,3 +1,4 @@
+import { Html } from "@kitajs/html";
 import { O } from "ts-toolbelt";
 import * as V from "../vars";
 import Page from "./Page";

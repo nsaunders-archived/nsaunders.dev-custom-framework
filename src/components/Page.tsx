@@ -1,60 +1,52 @@
+import { Html } from "@kitajs/html";
 import * as V from "../vars";
-import * as Theme from "../data/Theme";
 import hooks, { css as hooksCSS } from "../css-hooks";
 import PageHeader from "./PageHeader";
 import PageFooter from "./PageFooter";
 
-export type Props = Parameters<typeof PageHeader>[0] & {
-  store: {
-    environment: "development" | "production";
-  };
-} & JSX.ElementChildrenAttribute;
+export type Props = Parameters<typeof PageHeader>[0] &
+  JSX.ElementChildrenAttribute;
 
-export default function ({ children, cookie, path, store }: Props) {
-  const theme = cookie.themePreference.value || Theme.defaultOption;
+export default function ({ children, theme, pathname }: Props) {
   return (
-    <html data-theme={theme} style={{ overflowY: "scroll" }}>
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <base href={path.endsWith("/") ? path : `${path}/`} />
-        <script src="/assets/htmx.js" defer></script>
-        <link rel="stylesheet" href="/assets/normalize.css" />
-        <link rel="stylesheet" href="/assets/onest.css" />
-        <link rel="stylesheet" href="/assets/montserrat.css" />
-        <link rel="stylesheet" href="/assets/inconsolata.css" />
-        <link rel="stylesheet" href="/assets/prism.css" />
-        <style>{hooksCSS}</style>
-      </head>
-      <body
-        hx-boost="true"
-        style={hooks({
-          fontFamily: "'Onest Variable', sans-serif",
-          margin: 0,
-          minHeight: "100dvh",
-          display: "flex",
-          flexDirection: "column",
-          lineHeight: 1.25,
-          background: V.white,
-          color: V.black,
-          dark: { background: V.gray90, color: V.white },
-        })}
-      >
-        <PageHeader cookie={cookie} path={path} />
-        <div style={{ marginBottom: "2em" }}>{children}</div>
-        <PageFooter style={{ marginTop: "auto" }} />
-        {store.environment === "development" ? (
-          <script>{`
-            (function () {
-              var ws = new WebSocket("ws" + (location.protocol === "https:" ? "s" : "") + "://" + location.host + "/development");
-              ws.onclose = function() {
-                setTimeout(function() {
-                  location.reload();
-                }, 1000);
-              };
-            })();
-          `}</script>
-        ) : undefined}
-      </body>
-    </html>
+    "<!DOCTYPE html>" +
+    (
+      <html data-theme={theme} style={{ overflowY: "scroll" }}>
+        <head>
+          <meta charset="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <base href={pathname.endsWith("/") ? pathname : `${pathname}/`} />
+          <script src="/htmx.js" defer></script>
+          <link rel="stylesheet" href="/normalize.css" />
+          <link rel="stylesheet" href="/onest.css" />
+          <link rel="stylesheet" href="/montserrat.css" />
+          <link rel="stylesheet" href="/inconsolata.css" />
+          <link rel="stylesheet" href="/global.css" />
+          <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css"
+          />
+          <style>{hooksCSS}</style>
+        </head>
+        <body
+          hx-boost="true"
+          style={hooks({
+            fontFamily: "'Onest Variable', sans-serif",
+            margin: 0,
+            minHeight: "100dvh",
+            display: "flex",
+            flexDirection: "column",
+            lineHeight: 1.25,
+            background: V.white,
+            color: V.black,
+            dark: { background: V.gray90, color: V.white },
+          })}
+        >
+          <PageHeader theme={theme} pathname={pathname} />
+          <div style={{ marginBottom: "2em" }}>{children}</div>
+          <PageFooter style={{ marginTop: "auto" }} />
+        </body>
+      </html>
+    )
   );
 }

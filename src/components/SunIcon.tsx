@@ -1,3 +1,4 @@
+import { Html } from "@kitajs/html";
 import withIcon from "./withIcon.js";
 
 export default withIcon(
@@ -19,5 +20,5 @@ export default withIcon(
     "stroke-linecap": "round",
     "stroke-linejoin": "round",
     "stroke-width": "2",
-  }
+  },
 );

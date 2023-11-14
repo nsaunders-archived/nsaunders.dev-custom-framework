@@ -1,5 +1,6 @@
 /// <reference types="@kitajs/html/htmx.d.ts" />
 
+import { Html } from "@kitajs/html";
 import * as Theme from "../data/Theme";
 import SunIcon from "./SunIcon";
 import MoonIcon from "./MoonIcon";
@@ -20,6 +21,7 @@ export default function ThemeSwitcher({ theme = Theme.defaultOption }: Props) {
         hx-trigger="change"
         hx-swap="outerHTML"
         style={hooks({
+          margin: 0,
           overflow: "hidden",
           display: "inline-flex",
           position: "relative",

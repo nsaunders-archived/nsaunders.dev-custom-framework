@@ -1,3 +1,4 @@
+import { Html } from "@kitajs/html";
 import A from "./A";
 import type * as Projects from "../data/Projects";
 import StarIcon from "./StarIcon";

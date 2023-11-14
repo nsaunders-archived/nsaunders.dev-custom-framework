@@ -1,0 +1,16 @@
+.shiki {
+  padding: 1em 1.25em;
+}
+
+.shiki,
+.shiki span {
+  font-family: "Inconsolata Variable", monospace !important;
+  color: var(--dark-0, var(--shiki-light)) var(--dark-1, var(--shiki-dark)) !important;
+  background-color: transparent !important;
+  font-style: var(--dark-0, var(--shiki-light-font-style))
+    var(--dark-1, var(--shiki-dark-font-style)) !important;
+  font-weight: var(--dark-0, var(--shiki-light-font-weight))
+    var(--dark-1, var(--shiki-dark-font-weight)) !important;
+  text-decoration: var(--dark-0, var(--shiki-light-text-decoration))
+    var(--dark-1, var(--shiki-dark-text-decoration)) !important;
+}

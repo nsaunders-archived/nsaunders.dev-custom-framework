@@ -1,3 +1,4 @@
+import { Html } from "@kitajs/html";
 import * as V from "../vars";
 import hooks from "../css-hooks";
 import A from "./A";
@@ -5,20 +6,11 @@ import ThemeSwitcher from "./ThemeSwitcher";
 import * as Theme from "../data/Theme";
 
 export type Props = {
-  cookie: {
-    themePreference: {
-      value: (typeof Theme.options)[number] | undefined;
-    };
-  };
-  path: string;
+  theme: (typeof Theme.options)[number];
+  pathname: string;
 };
 
-export default function ({
-  cookie: {
-    themePreference: { value: theme },
-  },
-  path,
-}: Props) {
+export default function ({ theme, pathname }: Props) {
   return (
     <header
       style={hooks({
@@ -26,7 +18,7 @@ export default function ({
         alignItems: "center",
         justifyContent: "space-between",
         gap: "1em",
-        background: V.gray10,
+        background: V.gray05,
         padding: "0.25em 1em",
         dark: {
           background: V.gray80,
@@ -45,12 +37,14 @@ export default function ({
         Nick Saunders
       </A>
       <div style={{ flex: 1 }} />
-      {[
-        ["/posts", "Posts"],
-        ["/projects", "Projects"],
-        ["/about", "About"],
-      ].map(([href, label]) => (
-        <A href={href} selected={path.startsWith(href)}>
+      {(
+        [
+          ["/posts", "Posts"],
+          ["/projects", "Projects"],
+          ["/about", "About"],
+        ] as const
+      ).map(([href, label]) => (
+        <A href={href} selected={pathname.startsWith(href)}>
           {label}
         </A>
       ))}

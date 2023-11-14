@@ -1,3 +1,4 @@
+import { Html } from "@kitajs/html";
 import { O } from "ts-toolbelt";
 import * as V from "../vars";
 import hooks from "../css-hooks";
@@ -16,10 +17,10 @@ import ScreenReaderOnly from "./ScreenReaderOnly";
 import A from "./A";
 
 export type Props = O.Omit<Parameters<typeof Page>[0], "children"> & {
-  params: { name: string };
+  name: string;
 };
 
-export default async function ({ params: { name }, ...pageProps }: Props) {
+export default async function ({ name, ...pageProps }: Props) {
   const post = await Posts.getByName(name);
   if (!post) {
     throw new NotFoundError("The requested post does not exist.");
@@ -71,7 +72,7 @@ export default async function ({ params: { name }, ...pageProps }: Props) {
           </div>
         </Jumbotron>
         <BlockSection>
-          <Markdown>{content}</Markdown>
+          {await (<Markdown>{content}</Markdown>)}
           <div
             style={{ display: "flex", gap: "0.5em", marginBlockStart: "2em" }}
           >

@@ -1,3 +1,4 @@
+import { Html } from "@kitajs/html";
 import * as Posts from "../data/Posts";
 import A from "./A";
 import FormatDate from "./FormatDate";

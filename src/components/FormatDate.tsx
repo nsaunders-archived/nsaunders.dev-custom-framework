@@ -1,3 +1,4 @@
+import { Html } from "@kitajs/html";
 import { format } from "date-fns";
 
 export type Props = {

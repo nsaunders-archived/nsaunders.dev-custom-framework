@@ -1,3 +1,4 @@
+import { Html } from "@kitajs/html";
 import * as V from "../vars";
 import hooks from "../css-hooks";
 import BlockSection from "./BlockSection";
@@ -10,7 +11,7 @@ export default function ({ headline, children }: Props) {
   return (
     <section
       style={hooks({
-        background: V.gray10,
+        background: V.gray05,
         fontSize: "1.5em",
         padding: "2em",
         dark: {

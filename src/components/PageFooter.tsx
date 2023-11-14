@@ -1,3 +1,4 @@
+import { Html } from "@kitajs/html";
 import * as CSS from "csstype";
 import * as V from "../vars";
 import hooks from "../css-hooks";
@@ -10,7 +11,7 @@ export default function PageFooter({ style }: Props) {
     <footer
       style={{
         ...hooks({
-          background: V.gray10,
+          background: V.gray05,
           dark: {
             background: V.black,
           },

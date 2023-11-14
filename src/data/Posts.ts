@@ -1,6 +1,6 @@
 import { Type } from "@sinclair/typebox";
 import { Value } from "@sinclair/typebox/value";
-import matter from "gray-matter";
+import matter from "front-matter";
 
 const DateT = Type.Transform(Type.String())
   .Decode(s => new Date(s))
@@ -35,7 +35,7 @@ export async function getByName(name: string) {
   if (!(post && markdown)) {
     return undefined;
   }
-  const { content } = matter(markdown);
+  const { body: content } = matter(markdown);
   return {
     ...post,
     baseHref: `https://github.com/nsaunders/writing/raw/master/posts/${name}/`,

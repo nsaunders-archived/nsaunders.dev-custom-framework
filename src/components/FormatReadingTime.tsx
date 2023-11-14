@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { Html } from "@kitajs/html";
 
 export type Props = {
   children: number;
