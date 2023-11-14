@@ -4,7 +4,6 @@ import * as V from "../vars";
 import hooks from "../css-hooks";
 import Page from "./Page";
 import * as Posts from "../data/Posts";
-import { NotFoundError } from "elysia";
 import Jumbotron from "./Jumbotron";
 import BlockSection from "./BlockSection";
 import Markdown from "./Markdown";
@@ -15,6 +14,7 @@ import FormatDate from "./FormatDate";
 import LabelValuePair from "./LabelValuePair";
 import ScreenReaderOnly from "./ScreenReaderOnly";
 import A from "./A";
+import createHttpError from "http-errors";
 
 export type Props = O.Omit<Parameters<typeof Page>[0], "children"> & {
   name: string;
@@ -23,7 +23,10 @@ export type Props = O.Omit<Parameters<typeof Page>[0], "children"> & {
 export default async function ({ name, ...pageProps }: Props) {
   const post = await Posts.getByName(name);
   if (!post) {
-    throw new NotFoundError("The requested post does not exist.");
+    throw createHttpError(
+      404,
+      `I'm sorry, but I couldn't find a post named "${name}".`,
+    );
   }
   const {
     title,

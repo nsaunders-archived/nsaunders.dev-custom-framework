@@ -8,6 +8,8 @@
   "dependencies": {
     "@css-hooks/core": "^1.2.1",
     "@fontsource-variable/inconsolata": "^5.0.15",
+    "@kitajs/html": "^3.0.8",
+    "@sinclair/typebox": "^0.31.23",
     "@types/http-errors": "^2.0.4",
     "cheerio": "^1.0.0-rc.12",
     "date-fns": "^2.30.0",
