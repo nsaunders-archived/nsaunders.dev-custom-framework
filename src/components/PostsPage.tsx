@@ -8,13 +8,14 @@ import hooks from "../css-hooks";
 import ListItemEmphasis from "./ListItemEmphasis";
 import ListLayout from "./ListLayout";
 import BlockSection from "./BlockSection";
+import { ReadonlyArray, pipe } from "effect";
 
-export default async function (
-  pageProps: O.Omit<Parameters<typeof Page>[0], "children">,
-) {
-  const posts = (await Posts.list()).sort((a, b) =>
-    a.published > b.published ? -1 : a.published < b.published ? 1 : 0,
-  );
+export type Props = {
+  posts: Posts.Posts;
+} & O.Omit<Parameters<typeof Page>[0], "children">;
+
+export default function ({ posts: unsortedPosts, ...pageProps }: Props) {
+  const posts = pipe(unsortedPosts, ReadonlyArray.sort(Posts.newestFirst));
   return (
     <Page {...pageProps}>
       <main

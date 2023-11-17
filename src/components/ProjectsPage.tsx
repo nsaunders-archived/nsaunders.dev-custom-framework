@@ -1,16 +1,18 @@
 import { Html } from "@kitajs/html";
 import { O } from "ts-toolbelt";
 import Page from "./Page";
-import * as Projects from "../data/Projects";
+import { Projects } from "../data/Projects";
 import BlockSection from "./BlockSection";
 import ListItemEmphasis from "./ListItemEmphasis";
 import ListLayout from "./ListLayout";
 import ProjectListItem from "./ProjectListItem";
 
-export default async function (
-  pageProps: O.Omit<Parameters<typeof Page>[0], "children">,
-) {
-  const projects = await Projects.list();
+export type Props = { projects: Projects } & O.Omit<
+  Parameters<typeof Page>[0],
+  "children"
+>;
+
+export default function ({ projects, ...pageProps }: Props) {
   return (
     <Page {...pageProps}>
       <main style={{ margin: "4em" }}>

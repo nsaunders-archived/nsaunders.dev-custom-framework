@@ -12,7 +12,7 @@ export default function ListItemEmphasis({ children, style }: Props) {
     <div
       style={{
         ...hooks({
-          background: V.gray10,
+          background: V.gray05,
           dark: { background: V.gray80 },
           padding: "2em",
         }),

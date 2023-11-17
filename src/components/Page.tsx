@@ -15,7 +15,6 @@ export default function ({ children, theme, pathname }: Props) {
         <head>
           <meta charset="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <base href={pathname.endsWith("/") ? pathname : `${pathname}/`} />
           <script src="/htmx.js" defer></script>
           <link rel="stylesheet" href="/normalize.css" />
           <link rel="stylesheet" href="/onest.css" />

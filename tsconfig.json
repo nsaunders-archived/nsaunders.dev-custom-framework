@@ -9,7 +9,8 @@
     "jsxFactory": "Html.createElement",
     "jsxFragmentFactory": "Html.Fragment",
     "plugins": [{ "name": "@kitajs/ts-html-plugin" }],
-    "types": ["@cloudflare/workers-types/2023-07-01"]
+    "types": ["@cloudflare/workers-types/2023-07-01"],
+    "exactOptionalPropertyTypes": true
   },
   "include": ["scripts", "src"]
 }

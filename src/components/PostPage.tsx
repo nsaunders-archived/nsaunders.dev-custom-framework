@@ -3,7 +3,7 @@ import { O } from "ts-toolbelt";
 import * as V from "../vars";
 import hooks from "../css-hooks";
 import Page from "./Page";
-import * as Posts from "../data/Posts";
+import { Post } from "../data/Posts";
 import Jumbotron from "./Jumbotron";
 import BlockSection from "./BlockSection";
 import Markdown from "./Markdown";
@@ -14,21 +14,13 @@ import FormatDate from "./FormatDate";
 import LabelValuePair from "./LabelValuePair";
 import ScreenReaderOnly from "./ScreenReaderOnly";
 import A from "./A";
-import createHttpError from "http-errors";
 
-export type Props = O.Omit<Parameters<typeof Page>[0], "children"> & {
-  name: string;
-};
+export type Props = {
+  post: Post;
+} & O.Omit<Parameters<typeof Page>[0], "children">;
 
-export default async function ({ name, ...pageProps }: Props) {
-  const post = await Posts.getByName(name);
-  if (!post) {
-    throw createHttpError(
-      404,
-      `I'm sorry, but I couldn't find a post named "${name}".`,
-    );
-  }
-  const {
+export default async function ({
+  post: {
     title,
     description,
     published,
@@ -36,7 +28,9 @@ export default async function ({ name, ...pageProps }: Props) {
     content,
     discussionHref,
     editHref,
-  } = post;
+  },
+  ...pageProps
+}: Props) {
   return (
     <Page {...pageProps}>
       <main style={{ display: "flex", flexDirection: "column", gap: "2em" }}>
@@ -75,7 +69,7 @@ export default async function ({ name, ...pageProps }: Props) {
           </div>
         </Jumbotron>
         <BlockSection>
-          {await (<Markdown>{content}</Markdown>)}
+          {content}
           <div
             style={{ display: "flex", gap: "0.5em", marginBlockStart: "2em" }}
           >

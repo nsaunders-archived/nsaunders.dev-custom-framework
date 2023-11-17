@@ -10,16 +10,15 @@ import PostListItem from "./PostListItem";
 import hooks from "../css-hooks";
 import ProjectListItem from "./ProjectListItem";
 import A from "./A";
-import * as Posts from "../data/Posts";
-import * as Projects from "../data/Projects";
+import type { Posts } from "../data/Posts";
+import type { FeaturedProject } from "../data/Projects";
 
-export default async function (
-  pageProps: O.Omit<Parameters<typeof Page>[0], "children">,
-) {
-  const [latestPost] = (await Posts.list()).sort((a, b) =>
-    a.published > b.published ? -1 : a.published < b.published ? 1 : 0,
-  );
-  const featuredProject = await Projects.getFeatured();
+export type Props = {
+  latestPost: Posts[number] | undefined;
+  featuredProject: FeaturedProject | undefined;
+} & O.Omit<Parameters<typeof Page>[0], "children">;
+
+export default function ({ latestPost, featuredProject, ...pageProps }: Props) {
   return (
     <Page {...pageProps}>
       <main style={{ display: "flex", flexDirection: "column", gap: "4em" }}>
