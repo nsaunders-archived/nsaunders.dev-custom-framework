@@ -2,6 +2,7 @@ import { Html } from "@kitajs/html";
 import { Console, Effect, Either, Option, ReadonlyArray, pipe } from "effect";
 import { getAssetFromKV } from "@cloudflare/kv-asset-handler";
 import createHttpError from "http-errors";
+import * as Pages from "./data/Pages";
 import * as Posts from "./data/Posts";
 import * as Projects from "./data/Projects";
 import * as Theme from "./data/Theme";
@@ -20,6 +21,7 @@ import { loadWasm } from "shikiji/core";
 import wasm from "../node_modules/shikiji/dist/onig.wasm";
 import ProjectsPage from "./components/ProjectsPage";
 import renderMarkdown from "./renderMarkdown";
+import AboutPage from "./components/AboutPage";
 
 // load wasm outside of `fetch` so it can be reused
 await loadWasm(obj => WebAssembly.instantiate(wasm, obj));
@@ -50,6 +52,7 @@ export default {
             ),
           );
         }
+
         const formData = yield* _(
           Effect.tryPromise({
             try: () => request.formData(),
@@ -57,6 +60,7 @@ export default {
               createHttpError(400, "Unable to parse request body as form data"),
           }),
         );
+
         if (!formData.has("theme")) {
           yield* _(
             Effect.fail(
@@ -67,11 +71,13 @@ export default {
             ),
           );
         }
+
         const theme = yield* _(
           Effect.orElseFail(Theme.parse2(formData.get("theme")), () =>
             createHttpError(400, `Invalid theme "${formData.get("theme")}"`),
           ),
         );
+
         const html = yield* _(
           Effect.orElseFail(
             Effect.promise(async () => await (<ThemeSwitcher theme={theme} />)),
@@ -82,6 +88,7 @@ export default {
               ),
           ),
         );
+
         return new Response(html, {
           headers: {
             "Content-Type": "text/html",
@@ -169,8 +176,12 @@ export default {
         if (pathname === "/projects") {
           const projects = yield* _(
             Projects.list(),
-            Effect.orElseFail(() =>
-              createHttpError(500, "An error occurred while listing projects."),
+            Effect.mapError(inner =>
+              createHttpError(
+                500,
+                "An error occurred while listing projects.",
+                { inner },
+              ),
             ),
           );
 
@@ -188,6 +199,36 @@ export default {
                 createHttpError(
                   500,
                   "An error occurred while rendering the project page.",
+                ),
+            }),
+          );
+
+          return new Response(html, {
+            headers: {
+              "Content-Type": "text/html",
+            },
+          });
+        }
+
+        if (pathname === "/about") {
+          const page = yield* _(Pages.getByName("about"));
+
+          const content = yield* _(renderMarkdown(page.content, { pathname }));
+
+          const html = yield* _(
+            Effect.tryPromise({
+              try: async () =>
+                await (
+                  <AboutPage
+                    theme={theme}
+                    pathname={pathname}
+                    content={content}
+                  />
+                ),
+              catch: () =>
+                createHttpError(
+                  500,
+                  "An error occurred while rendering the about page.",
                 ),
             }),
           );

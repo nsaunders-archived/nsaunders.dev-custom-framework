@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "@css-hooks/core": "^1.2.1",
+    "@effect/platform-browser": "^0.18.5",
     "@effect/schema": "^0.47.7",
     "@fontsource-variable/inconsolata": "^5.0.15",
     "@kitajs/html": "^3.0.8",

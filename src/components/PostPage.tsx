@@ -69,7 +69,7 @@ export default async function ({
           </div>
         </Jumbotron>
         <BlockSection>
-          {content}
+          <div style={{ lineHeight: 1.5 }}>{content}</div>
           <div
             style={{ display: "flex", gap: "0.5em", marginBlockStart: "2em" }}
           >

@@ -1,15 +1,15 @@
 import { Html } from "@kitajs/html";
 import { O } from "ts-toolbelt";
-import * as Pages from "../data/Pages";
 import Page from "./Page";
 import Jumbotron from "./Jumbotron";
 import Markdown from "./Markdown";
 import BlockSection from "./BlockSection";
 
-export default async function (
-  pageProps: O.Omit<Parameters<typeof Page>[0], "children">,
-) {
-  const { content } = await Pages.getByName("about");
+export type Props = {
+  content: string;
+} & O.Omit<Parameters<typeof Page>[0], "children">;
+
+export default function ({ content, ...pageProps }: Props) {
   return (
     <Page {...pageProps}>
       <main style={{ display: "flex", flexDirection: "column", gap: "2em" }}>
@@ -36,9 +36,7 @@ export default async function (
             </div>
           }
         />
-        <BlockSection>
-          <Markdown>{content}</Markdown>
-        </BlockSection>
+        <BlockSection style={{ lineHeight: 1.5 }}>{content}</BlockSection>
       </main>
     </Page>
   );
