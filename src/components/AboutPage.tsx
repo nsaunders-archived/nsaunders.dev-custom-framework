@@ -2,7 +2,6 @@ import { Html } from "@kitajs/html";
 import { O } from "ts-toolbelt";
 import Page from "./Page";
 import Jumbotron from "./Jumbotron";
-import Markdown from "./Markdown";
 import BlockSection from "./BlockSection";
 
 export type Props = {

@@ -66,26 +66,28 @@ export default {
             Effect.fail(
               createHttpError(
                 400,
-                'Form data does not include the required "theme" key.',
+                'Form data do not include the required "theme" key.',
               ),
             ),
           );
         }
 
         const theme = yield* _(
-          Effect.orElseFail(Theme.parse2(formData.get("theme")), () =>
-            createHttpError(400, `Invalid theme "${formData.get("theme")}"`),
+          Theme.parse(formData.get("theme")),
+          Effect.mapError(inner =>
+            createHttpError(400, `Invalid theme "${formData.get("theme")}"`, {
+              inner,
+            }),
           ),
         );
 
         const html = yield* _(
-          Effect.orElseFail(
-            Effect.promise(async () => await (<ThemeSwitcher theme={theme} />)),
-            () =>
-              createHttpError(
-                500,
-                "Content rendering failure. Please try again.",
-              ),
+          Effect.promise(async () => await (<ThemeSwitcher theme={theme} />)),
+          Effect.orElseFail(() =>
+            createHttpError(
+              500,
+              "Content rendering failure. Please try again.",
+            ),
           ),
         );
 
@@ -120,19 +122,21 @@ export default {
               [
                 pipe(
                   Posts.list(),
-                  Effect.orElseFail(() =>
+                  Effect.mapError(inner =>
                     createHttpError(
                       500,
                       "An error occurred while listing posts.",
+                      { inner },
                     ),
                   ),
                 ),
                 pipe(
                   Projects.getFeatured(),
-                  Effect.orElseFail(() =>
+                  Effect.mapError(inner =>
                     createHttpError(
                       500,
                       "An error occurred while getting the featured project.",
+                      { inner },
                     ),
                   ),
                 ),
@@ -211,9 +215,27 @@ export default {
         }
 
         if (pathname === "/about") {
-          const page = yield* _(Pages.getByName("about"));
+          const page = yield* _(
+            Pages.getByName("about"),
+            Effect.mapError(inner =>
+              createHttpError(
+                500,
+                "An error occurred while fetching the about page content.",
+                { inner },
+              ),
+            ),
+          );
 
-          const content = yield* _(renderMarkdown(page.content, { pathname }));
+          const content = yield* _(
+            renderMarkdown(page.content, { pathname }),
+            Effect.mapError(inner =>
+              createHttpError(
+                500,
+                "An error occurred while rendering the markdown content as HTML.",
+                { content: page.content, inner },
+              ),
+            ),
+          );
 
           const html = yield* _(
             Effect.tryPromise({
@@ -372,72 +394,5 @@ export default {
         );
       }),
     );
-    // try {
-    //   const cookies: Record<string, string> = Object.fromEntries(
-    //     (request.headers.get("Cookie") || "")
-    //       .split("; ")
-    //       .map(x => x.split("="))
-    //       .filter(x => x.length === 2),
-    //   );
-    //   const theme = Theme.parse(cookies["theme"])
-    //     ? cookies["theme"]
-    //     : Theme.defaultOption;
-    //   if (/^get$/i.test(request.method)) {
-    //     if (pathname === "/") {
-    //       return new Response(
-    //         await(<HomePage pathname={pathname} theme={theme} />),
-    //         {
-    //           headers: {
-    //             "Content-Type": "text/html",
-    //           },
-    //         },
-    //       );
-    //     }
-    //     if (pathname === "/posts") {
-    //       return new Response(
-    //         await(<PostsPage pathname={pathname} theme={theme} />),
-    //         {
-    //           headers: {
-    //             "Content-Type": "text/html",
-    //           },
-    //         },
-    //       );
-    //     }
-    //     if (/\/posts\/[^\/]+/.test(pathname)) {
-    //       const name = pathname.replace(/^\/posts\//, "");
-    //       return new Response(
-    //         await(<PostPage name={name} pathname={pathname} theme={theme} />),
-    //         {
-    //           headers: {
-    //             "Content-Type": "text/html",
-    //           },
-    //         },
-    //       );
-    //     }
-    //   }
-    //   try {
-    //     return await getAssetFromKV(
-    //       {
-    //         request,
-    //         waitUntil: ctx.waitUntil.bind(ctx),
-    //       },
-    //       {
-    //         ASSET_NAMESPACE: env.__STATIC_CONTENT,
-    //         ASSET_MANIFEST: assetManifest,
-    //       },
-    //     );
-    //   } catch {
-    //     throw createHttpError(404, `No resource was found at "${pathname}".`);
-    //   }
-    // } catch (e) {
-    //   if (e instanceof HttpError && e.expose) {
-    //     return new Response(e.message, { status: e.status });
-    //   }
-    //   console.error(e);
-    //   return new Response(
-    //     "I'm sorry, but I'm unable to fulfill your request due to an error. It's not your fault. Please try again.",
-    //     { status: 500 },
-    //   );
-    // }
   },
 };

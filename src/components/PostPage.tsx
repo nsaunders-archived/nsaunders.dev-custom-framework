@@ -6,7 +6,6 @@ import Page from "./Page";
 import { Post } from "../data/Posts";
 import Jumbotron from "./Jumbotron";
 import BlockSection from "./BlockSection";
-import Markdown from "./Markdown";
 import CalendarIcon from "./CalendarIcon";
 import ClockIcon from "./ClockIcon";
 import FormatReadingTime from "./FormatReadingTime";

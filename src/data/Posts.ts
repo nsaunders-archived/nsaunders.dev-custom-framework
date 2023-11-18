@@ -55,6 +55,8 @@ const getPostContent = (name: string) =>
       ),
     );
 
+export type Post = Effect.Effect.Success<ReturnType<typeof getByName>>;
+
 export const getByName = (name: string) =>
   pipe(
     Effect.all(
