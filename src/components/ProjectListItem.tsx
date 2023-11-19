@@ -1,11 +1,14 @@
-import { Html } from "@kitajs/html";
 import A from "./A";
-import type * as Projects from "../data/Projects";
+import { Projects } from "../data/Projects";
 import StarIcon from "./StarIcon";
 import ForkIcon from "./ForkIcon";
 import hooks from "../css-hooks";
 
-function ProjectListItemDetail({ children }: JSX.ElementChildrenAttribute) {
+function ProjectListItemDetail({
+  children,
+}: {
+  children?: JSX.Node | JSX.Node[];
+}) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "0.375em" }}>
       {children}
@@ -14,12 +17,11 @@ function ProjectListItemDetail({ children }: JSX.ElementChildrenAttribute) {
 }
 
 export type Props = {
-  children: Awaited<ReturnType<(typeof Projects)["list"]>>[number];
+  children: Projects[number];
 };
 
-export default function ProjectListItem({
-  children: { url, name, description, language, stars, forks },
-}: Props) {
+export default function ProjectListItem({ children }: Props) {
+  const { url, name, description, language, stars, forks } = children;
   return (
     <div
       style={{

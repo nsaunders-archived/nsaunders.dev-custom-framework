@@ -1,13 +1,12 @@
-import { Html } from "@kitajs/html";
-import * as Posts from "../data/Posts";
+import { PostBrief } from "../data/Posts";
 import A from "./A";
-import FormatDate from "./FormatDate";
-import FormatReadingTime from "./FormatReadingTime";
 import hooks from "../css-hooks";
 import * as V from "../vars";
+import * as Date from "../data/Date";
+import * as ReadingTime from "../data/ReadingTime";
 
 export type Props = {
-  children: Awaited<ReturnType<typeof Posts.list>>[number];
+  children: PostBrief;
 };
 
 export default function PostListItem({
@@ -32,12 +31,8 @@ export default function PostListItem({
           },
         })}
       >
-        <span>
-          <FormatDate>{published}</FormatDate>
-        </span>
-        <span>
-          <FormatReadingTime>{readingTime}</FormatReadingTime>
-        </span>
+        <span>{Date.format(published)}</span>
+        <span>{ReadingTime.format(readingTime)}</span>
       </div>
       <A href={`/posts/${name}`} style={{ fontSize: "2em" }}>
         {title}

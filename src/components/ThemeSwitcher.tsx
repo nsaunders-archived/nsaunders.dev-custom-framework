@@ -1,6 +1,3 @@
-/// <reference types="@kitajs/html/htmx.d.ts" />
-
-import { Html } from "@kitajs/html";
 import * as Theme from "../data/Theme";
 import SunIcon from "./SunIcon";
 import MoonIcon from "./MoonIcon";

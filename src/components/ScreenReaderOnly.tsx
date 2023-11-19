@@ -1,9 +1,9 @@
-import { Html } from "@kitajs/html";
 import * as CSS from "csstype";
 
 export type Props = {
   style?: CSS.Properties;
-} & JSX.ElementChildrenAttribute;
+  children?: JSX.Node | JSX.Node[];
+};
 
 export default function ScreenReaderOnly({ style, children }: Props) {
   return (

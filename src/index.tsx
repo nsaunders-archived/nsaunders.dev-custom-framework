@@ -1,7 +1,8 @@
-import { Html } from "@kitajs/html";
 import { Console, Effect, Either, Option, ReadonlyArray, pipe } from "effect";
 import { getAssetFromKV } from "@cloudflare/kv-asset-handler";
 import createHttpError from "http-errors";
+import { css as hooksCSS } from "./css-hooks";
+import * as HTML from "@nsaunders/html";
 import * as Pages from "./data/Pages";
 import * as Posts from "./data/Posts";
 import * as Projects from "./data/Projects";
@@ -29,6 +30,8 @@ await loadWasm(obj => WebAssembly.instantiate(wasm, obj));
 type Environment = {
   __STATIC_CONTENT: unknown;
 };
+
+const htmlDoctype = "<!DOCTYPE html>";
 
 export default {
   fetch(request: Request, env: Environment, ctx: ExecutionContext) {
@@ -81,17 +84,7 @@ export default {
           ),
         );
 
-        const html = yield* _(
-          Effect.promise(async () => await (<ThemeSwitcher theme={theme} />)),
-          Effect.orElseFail(() =>
-            createHttpError(
-              500,
-              "Content rendering failure. Please try again.",
-            ),
-          ),
-        );
-
-        return new Response(html, {
+        return new Response(HTML.render(<ThemeSwitcher theme={theme} />), {
           headers: {
             "Content-Type": "text/html",
             "Set-Cookie": `theme=${theme}; Max-Age: ${/*1 year*/ 31558464}`,
@@ -116,6 +109,14 @@ export default {
       );
 
       if (/^get$/i.test(request.method)) {
+        if (pathname === "/hooks.css") {
+          return new Response(hooksCSS, {
+            headers: {
+              "Content-Type": "text/css",
+            },
+          });
+        }
+
         if (pathname === "/") {
           const [posts, featuredProject] = yield* _(
             Effect.all(
@@ -151,30 +152,22 @@ export default {
             Option.fromIterable,
           );
 
-          const html = yield* _(
-            Effect.tryPromise({
-              try: async () =>
-                await (
-                  <HomePage
-                    theme={theme}
-                    pathname={pathname}
-                    latestPost={Option.getOrUndefined(latestPost)}
-                    featuredProject={Option.getOrUndefined(featuredProject)}
-                  />
-                ),
-              catch: () =>
-                createHttpError(
-                  500,
-                  "An error occurred while rendering the homepage.",
-                ),
-            }),
-          );
-
-          return new Response(html, {
-            headers: {
-              "Content-Type": "text/html",
+          return new Response(
+            htmlDoctype +
+              HTML.render(
+                <HomePage
+                  theme={theme}
+                  pathname={pathname}
+                  latestPost={Option.getOrUndefined(latestPost)}
+                  featuredProject={Option.getOrUndefined(featuredProject)}
+                />,
+              ),
+            {
+              headers: {
+                "Content-Type": "text/html",
+              },
             },
-          });
+          );
         }
 
         if (pathname === "/projects") {
@@ -189,29 +182,21 @@ export default {
             ),
           );
 
-          const html = yield* _(
-            Effect.tryPromise({
-              try: async () =>
-                await (
-                  <ProjectsPage
-                    theme={theme}
-                    pathname={pathname}
-                    projects={projects}
-                  />
-                ),
-              catch: () =>
-                createHttpError(
-                  500,
-                  "An error occurred while rendering the project page.",
-                ),
-            }),
-          );
-
-          return new Response(html, {
-            headers: {
-              "Content-Type": "text/html",
+          return new Response(
+            htmlDoctype +
+              HTML.render(
+                <ProjectsPage
+                  theme={theme}
+                  pathname={pathname}
+                  projects={projects}
+                />,
+              ),
+            {
+              headers: {
+                "Content-Type": "text/html",
+              },
             },
-          });
+          );
         }
 
         if (pathname === "/about") {
@@ -237,29 +222,21 @@ export default {
             ),
           );
 
-          const html = yield* _(
-            Effect.tryPromise({
-              try: async () =>
-                await (
-                  <AboutPage
-                    theme={theme}
-                    pathname={pathname}
-                    content={content}
-                  />
-                ),
-              catch: () =>
-                createHttpError(
-                  500,
-                  "An error occurred while rendering the about page.",
-                ),
-            }),
-          );
-
-          return new Response(html, {
-            headers: {
-              "Content-Type": "text/html",
+          return new Response(
+            htmlDoctype +
+              HTML.render(
+                <AboutPage
+                  theme={theme}
+                  pathname={pathname}
+                  content={content}
+                />,
+              ),
+            {
+              headers: {
+                "Content-Type": "text/html",
+              },
             },
-          });
+          );
         }
 
         if (pathname === "/posts") {
@@ -270,25 +247,17 @@ export default {
             ),
           );
 
-          const html = yield* _(
-            Effect.tryPromise({
-              try: async () =>
-                await (
-                  <PostsPage theme={theme} pathname={pathname} posts={posts} />
-                ),
-              catch: () =>
-                createHttpError(
-                  500,
-                  "An error occurred while rendering the posts page.",
-                ),
-            }),
-          );
-
-          return new Response(html, {
-            headers: {
-              "Content-Type": "text/html",
+          return new Response(
+            htmlDoctype +
+              HTML.render(
+                <PostsPage theme={theme} pathname={pathname} posts={posts} />,
+              ),
+            {
+              headers: {
+                "Content-Type": "text/html",
+              },
             },
-          });
+          );
         }
 
         const postsMatch = pathname.match(/^\/posts\/([a-z\-]+)(\/(.+))?$/);
@@ -328,29 +297,21 @@ export default {
             ),
           );
 
-          const html = yield* _(
-            Effect.tryPromise({
-              try: async () =>
-                await (
-                  <PostPage
-                    theme={theme}
-                    pathname={pathname}
-                    post={{ ...post, content }}
-                  />
-                ),
-              catch: () =>
-                createHttpError(
-                  500,
-                  "An error occurred while rendering the post page.",
-                ),
-            }),
-          );
-
-          return new Response(html, {
-            headers: {
-              "Content-Type": "text/html",
+          return new Response(
+            htmlDoctype +
+              HTML.render(
+                <PostPage
+                  theme={theme}
+                  pathname={pathname}
+                  post={{ ...post, content }}
+                />,
+              ),
+            {
+              headers: {
+                "Content-Type": "text/html",
+              },
             },
-          });
+          );
         }
       }
 

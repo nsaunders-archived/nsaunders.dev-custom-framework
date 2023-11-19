@@ -1,8 +1,7 @@
-import { Html } from "@kitajs/html";
-
 export type Props = {
-  title?: JSX.ElementChildrenAttribute["children"];
-} & JSX.ElementChildrenAttribute;
+  title?: JSX.Node;
+  children?: JSX.Node | JSX.Node[];
+};
 
 export default function ListLayout({ children, title }: Props) {
   return (

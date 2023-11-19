@@ -1,9 +1,8 @@
-import { Html } from "@kitajs/html";
 import * as CSS from "csstype";
 
 export type Props = {
-  label: JSX.ElementChildrenAttribute["children"];
-  value: JSX.ElementChildrenAttribute["children"];
+  label: JSX.Node;
+  value: JSX.Node;
   style?: CSS.Properties;
 };
 

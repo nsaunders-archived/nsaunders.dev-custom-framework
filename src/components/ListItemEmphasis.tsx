@@ -1,11 +1,11 @@
-import { Html } from "@kitajs/html";
 import * as CSS from "csstype";
 import * as V from "../vars";
 import hooks from "../css-hooks";
 
 export type Props = {
   style?: CSS.Properties;
-} & JSX.ElementChildrenAttribute;
+  children?: JSX.Node | JSX.Node[];
+};
 
 export default function ListItemEmphasis({ children, style }: Props) {
   return (

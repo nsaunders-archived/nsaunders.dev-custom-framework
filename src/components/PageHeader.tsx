@@ -1,4 +1,3 @@
-import { Html } from "@kitajs/html";
 import * as V from "../vars";
 import hooks from "../css-hooks";
 import A from "./A";
@@ -37,17 +36,19 @@ export default function ({ theme, pathname }: Props) {
         Nick Saunders
       </A>
       <div style={{ flex: 1 }} />
-      {(
-        [
-          ["/posts", "Posts"],
-          ["/projects", "Projects"],
-          ["/about", "About"],
-        ] as const
-      ).map(([href, label]) => (
-        <A href={href} selected={pathname.startsWith(href)}>
-          {label}
-        </A>
-      ))}
+      <>
+        {(
+          [
+            ["/posts", "Posts"],
+            ["/projects", "Projects"],
+            ["/about", "About"],
+          ] as const
+        ).map(([href, label]) => (
+          <A href={href} selected={pathname.startsWith(href)}>
+            {label}
+          </A>
+        ))}
+      </>
       <hr
         style={hooks({
           border: 0,

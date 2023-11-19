@@ -5,11 +5,9 @@
     "moduleResolution": "Bundler",
     "target": "esnext",
     "lib": ["esnext"],
-    "jsx": "react",
-    "jsxFactory": "Html.createElement",
-    "jsxFragmentFactory": "Html.Fragment",
-    "plugins": [{ "name": "@kitajs/ts-html-plugin" }],
-    "types": ["@cloudflare/workers-types/2023-07-01"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "@nsaunders/html",
+    "types": ["@cloudflare/workers-types/2023-07-01", "@nsaunders/html"],
     "exactOptionalPropertyTypes": true
   },
   "include": ["scripts", "src"]

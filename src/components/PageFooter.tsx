@@ -1,4 +1,3 @@
-import { Html } from "@kitajs/html";
 import * as CSS from "csstype";
 import * as V from "../vars";
 import hooks from "../css-hooks";

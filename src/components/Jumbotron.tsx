@@ -1,11 +1,11 @@
-import { Html } from "@kitajs/html";
 import * as V from "../vars";
 import hooks from "../css-hooks";
 import BlockSection from "./BlockSection";
 
 export type Props = {
-  headline: JSX.ElementChildrenAttribute["children"];
-} & JSX.ElementChildrenAttribute;
+  headline?: JSX.Node;
+  children?: JSX.Node | JSX.Node[];
+};
 
 export default function ({ headline, children }: Props) {
   return (

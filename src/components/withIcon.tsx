@@ -1,4 +1,3 @@
-import { Html } from "@kitajs/html";
 import * as CSS from "csstype";
 import { O } from "ts-toolbelt";
 
@@ -12,7 +11,7 @@ type Options = {
 };
 
 export default function withIcon(
-  renderChildren: () => JSX.ElementChildrenAttribute["children"],
+  renderChildren: () => JSX.Node | JSX.Node[],
   options?: Options,
 ) {
   const { viewBoxSize = 24, ...restOptions } = options || {};

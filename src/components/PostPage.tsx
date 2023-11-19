@@ -1,4 +1,3 @@
-import { Html } from "@kitajs/html";
 import { O } from "ts-toolbelt";
 import * as V from "../vars";
 import hooks from "../css-hooks";
@@ -8,8 +7,8 @@ import Jumbotron from "./Jumbotron";
 import BlockSection from "./BlockSection";
 import CalendarIcon from "./CalendarIcon";
 import ClockIcon from "./ClockIcon";
-import FormatReadingTime from "./FormatReadingTime";
-import FormatDate from "./FormatDate";
+import * as ReadingTime from "../data/ReadingTime";
+import * as Date from "../data/Date";
 import LabelValuePair from "./LabelValuePair";
 import ScreenReaderOnly from "./ScreenReaderOnly";
 import A from "./A";
@@ -18,7 +17,7 @@ export type Props = {
   post: Post;
 } & O.Omit<Parameters<typeof Page>[0], "children">;
 
-export default async function ({
+export default function ({
   post: {
     title,
     description,
@@ -54,7 +53,7 @@ export default async function ({
                   <ScreenReaderOnly>Posted date</ScreenReaderOnly>
                 </>
               }
-              value={<FormatDate>{published}</FormatDate>}
+              value={Date.format(published)}
             />
             <LabelValuePair
               label={
@@ -63,7 +62,7 @@ export default async function ({
                   <ScreenReaderOnly>Reading time</ScreenReaderOnly>
                 </>
               }
-              value={<FormatReadingTime>{readingTime}</FormatReadingTime>}
+              value={ReadingTime.format(readingTime)}
             />
           </div>
         </Jumbotron>

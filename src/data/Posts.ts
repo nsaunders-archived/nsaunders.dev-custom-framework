@@ -21,6 +21,8 @@ export const newestFirst = Order.reverse(
   Order.mapInput(Order.Date, (post: Posts[number]) => post.published),
 );
 
+export type PostBrief = Effect.Effect.Success<ReturnType<typeof list>>[number];
+
 export const list = () =>
   Http.request
     .get(

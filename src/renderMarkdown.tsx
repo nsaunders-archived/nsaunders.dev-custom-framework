@@ -2,7 +2,6 @@ import { marked, RendererObject } from "marked";
 import A from "./components/A";
 import * as V from "./vars";
 import hooks from "./css-hooks";
-import h from "./h";
 import * as CSS from "csstype";
 import { getHighlighterCore } from "shikiji";
 import { Data, Effect } from "effect";
@@ -17,6 +16,7 @@ import tsx from "shikiji/langs/tsx.mjs";
 import slug from "slug";
 import LinkIcon from "./components/LinkIcon";
 import isAbsoluteURL from "is-absolute-url";
+import * as HTML from "@nsaunders/html";
 
 type RenderMarkdownError = Data.TaggedEnum<{
   RenderMarkdownHighlighterError: { message: string };
@@ -44,10 +44,9 @@ const renderMarkdown = (content: string, { pathname }: { pathname: string }) =>
 
     const renderer: RendererObject = {
       blockquote(quote) {
-        return h(
-          "blockquote" as const,
-          {
-            style: hooks({
+        return HTML.render(
+          <blockquote
+            style={hooks({
               borderWidth: 0,
               borderLeftWidth: "8px",
               borderStyle: "solid",
@@ -62,9 +61,9 @@ const renderMarkdown = (content: string, { pathname }: { pathname: string }) =>
                 background: V.gray85,
                 color: V.gray30,
               },
-            }),
-          },
-          [quote],
+            })}
+            dangerouslySetInnerHTML={{ __html: quote }}
+          />,
         );
       },
       code(code, lang) {
@@ -76,52 +75,53 @@ const renderMarkdown = (content: string, { pathname }: { pathname: string }) =>
           lang === "typescript" ||
           lang === "tsx"
         ) {
-          return h(
-            "div",
-            {
-              style: hooks({
+          return HTML.render(
+            <div
+              style={hooks({
                 background: V.gray05,
                 dark: { background: V.gray85 },
-              }),
-            },
-            [
-              highlighter.codeToHtml(code, {
-                lang,
-                themes: {
-                  dark: githubDark,
-                  light: githubLight,
-                },
-                defaultColor: false,
-              }),
-            ],
+              })}
+              dangerouslySetInnerHTML={{
+                __html: highlighter.codeToHtml(code, {
+                  lang,
+                  themes: {
+                    dark: githubDark,
+                    light: githubLight,
+                  },
+                  defaultColor: false,
+                }),
+              }}
+            />,
           );
         }
         return false;
       },
       codespan(text) {
-        return h(
-          "code",
-          {
-            style: { fontFamily: "'Inconsolata Variable', monospace" },
-          },
-          [text],
+        return HTML.render(
+          <code
+            style={{ fontFamily: "'Inconsolata Variable', monospace" }}
+            dangerouslySetInnerHTML={{ __html: text }}
+          />,
         );
       },
       image(src, alt) {
-        return h("img", {
-          src: isAbsoluteURL(src) ? src : `${pathname}/${src}`,
-          alt: alt || "",
-        });
+        return HTML.render(
+          <img
+            src={isAbsoluteURL(src) ? src : `${pathname}/${src}`}
+            alt={alt || ""}
+          />,
+        );
       },
-      link(href, title, children) {
-        const element: unknown = A({
-          href,
-          title: title || undefined,
-          children,
-        });
-        return typeof element === "string" ? element : false;
+      link(href, title, label) {
+        return HTML.render(
+          <A
+            href={href}
+            title={title || ""}
+            dangerouslySetInnerHTML={{ __html: label }}
+          />,
+        );
       },
-      heading(children, level) {
+      heading(text, level) {
         if (
           level === 1 ||
           level === 2 ||
@@ -130,7 +130,7 @@ const renderMarkdown = (content: string, { pathname }: { pathname: string }) =>
           level === 5 ||
           level === 6
         ) {
-          const tag = `h${level}` as const;
+          const Tag = `h${level}` as const;
           const style = [
             {
               fontSize: "calc(15em / 6)",
@@ -163,62 +163,30 @@ const renderMarkdown = (content: string, { pathname }: { pathname: string }) =>
               marginBlock: "calc(9em / 8)",
             },
           ][level - 1] as CSS.Properties;
-          return h(tag, { id: slug(children), class: ["group"], style }, [
-            h(
-              "a",
-              {
-                href: `#${slug(children)}`,
-                style: {
+          return HTML.render(
+            <Tag id={slug(text)} class="group" style={style}>
+              <a
+                href={`#${slug(text)}`}
+                style={{
                   float: "left",
                   marginLeft: "-28px",
                   paddingRight: "8px",
                   color: "inherit",
-                },
-              },
-              [
-                h(
-                  "div",
-                  {
-                    style: hooks({
-                      visibility: "hidden",
-                      width: "20px",
-                      groupHover: { visibility: "visible" },
-                    }),
-                  },
-                  [
-                    (() => {
-                      const el = LinkIcon({ size: "20px" });
-                      return typeof el === "string" ? el : "";
-                    })(),
-                  ],
-                ),
-              ],
-            ),
-            children,
-          ]);
-
-          // <Tag id={slug(text)} class="group" style={style}>
-          //   <a
-          //     href={`#${slug(text)}`}
-          //     style={{
-          //       float: "left",
-          //       marginLeft: "-28px",
-          //       paddingRight: "8px",
-          //       color: "inherit",
-          //     }}
-          //   >
-          //     <div
-          //       style={hooks({
-          //         visibility: "hidden",
-          //         width: "20px",
-          //         groupHover: { visibility: "visible" },
-          //       })}
-          //     >
-          //       <LinkIcon size="20px" />
-          //     </div>
-          //   </a>
-          //   {text}
-          // </Tag>
+                }}
+              >
+                <div
+                  style={hooks({
+                    visibility: "hidden",
+                    width: "20px",
+                    groupHover: { visibility: "visible" },
+                  })}
+                >
+                  <LinkIcon size="20px" />
+                </div>
+              </a>
+              <span dangerouslySetInnerHTML={{ __html: text }} />
+            </Tag>,
+          );
         }
         return false;
       },
@@ -226,7 +194,13 @@ const renderMarkdown = (content: string, { pathname }: { pathname: string }) =>
 
     return yield* _(
       Effect.try({
-        try: () => marked.use({ gfm: true, renderer }).parse(content),
+        try: () => (
+          <div
+            dangerouslySetInnerHTML={{
+              __html: marked.use({ gfm: true, renderer }).parse(content),
+            }}
+          />
+        ),
         catch: error =>
           RenderMarkdownRendererError(
             error instanceof Error ? error : { message: "Unknown failure" },

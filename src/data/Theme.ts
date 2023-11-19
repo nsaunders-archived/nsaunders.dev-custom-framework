@@ -1,6 +1,6 @@
 import * as S from "@effect/schema/Schema";
 
-const options = ["light", "auto", "dark"] as const;
+export const options = ["light", "auto", "dark"] as const;
 
 const schema = S.union(...options.map(x => S.literal(x)));
 
