@@ -14,7 +14,7 @@ import ScreenReaderOnly from "./ScreenReaderOnly";
 import A from "./A";
 
 export type Props = {
-  post: Post;
+  post: Omit<Post, "content"> & { content: JSX.Element };
 } & O.Omit<Parameters<typeof Page>[0], "children">;
 
 export default function ({

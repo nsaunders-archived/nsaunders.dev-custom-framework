@@ -4,7 +4,7 @@ import Jumbotron from "./Jumbotron";
 import BlockSection from "./BlockSection";
 
 export type Props = {
-  content: string;
+  content: JSX.Element;
 } & O.Omit<Parameters<typeof Page>[0], "children">;
 
 export default function ({ content, ...pageProps }: Props) {
