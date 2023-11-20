@@ -2,30 +2,31 @@ import { Console, Effect, Either, Option, ReadonlyArray, pipe } from "effect";
 import { getAssetFromKV } from "@cloudflare/kv-asset-handler";
 import createHttpError from "http-errors";
 import { css as hooksCSS } from "./css-hooks";
-import * as HTML from "@nsaunders/html";
+
+import * as HTML from "./data/HTML";
 import * as Pages from "./data/Pages";
 import * as Posts from "./data/Posts";
 import * as Projects from "./data/Projects";
 import * as Theme from "./data/Theme";
+import renderMarkdown from "./renderMarkdown";
 
-// @ts-ignore
-import manifestJSON from "__STATIC_CONTENT_MANIFEST";
+import AboutPage from "./components/AboutPage";
 import ThemeSwitcher from "./components/ThemeSwitcher";
 import HomePage from "./components/HomePage";
 import PostsPage from "./components/PostsPage";
 import PostPage from "./components/PostPage";
-const assetManifest = JSON.parse(manifestJSON);
-import { loadWasm } from "shikiji/core";
-
-// import wasm as assets
-// @ts-ignore
-import wasm from "../node_modules/shikiji/dist/onig.wasm";
 import ProjectsPage from "./components/ProjectsPage";
-import renderMarkdown from "./renderMarkdown";
-import AboutPage from "./components/AboutPage";
+import PostOpengraphImage from "./components/PostOpengraphImage";
+import * as PostOpengraphImageMeta from "./components/PostOpengraphImage";
 
-// load wasm outside of `fetch` so it can be reused
-await loadWasm(obj => WebAssembly.instantiate(wasm, obj));
+// @ts-ignore
+import manifestJSON from "__STATIC_CONTENT_MANIFEST";
+const assetManifest = JSON.parse(manifestJSON);
+
+// @ts-ignore
+import shikijiWasm from "../node_modules/shikiji/dist/onig.wasm";
+import * as Shikiji from "shikiji/core";
+await Shikiji.loadWasm(obj => WebAssembly.instantiate(shikijiWasm, obj));
 
 type Environment = {
   __STATIC_CONTENT: unknown;
@@ -268,6 +269,31 @@ export default {
           const name = postName.value;
 
           if (Option.isSome(postResource)) {
+            if (postResource.value === "opengraph.png") {
+              return yield* _(
+                HTML.renderImage(
+                  <PostOpengraphImage />,
+                  PostOpengraphImageMeta.dimensions,
+                ),
+                Effect.mapBoth({
+                  onFailure(cause) {
+                    return createHttpError(
+                      500,
+                      "An error occurred while rendering the Opengraph image.",
+                      { cause },
+                    );
+                  },
+                  onSuccess(body) {
+                    return new Response(body, {
+                      headers: {
+                        "Content-Type": "image/png",
+                      },
+                    });
+                  },
+                }),
+              );
+            }
+
             return new Response(null, {
               status: 302,
               headers: {

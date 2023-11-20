@@ -57,3 +57,15 @@ await Promise.all(
     );
   }),
 );
+
+await Promise.all(
+  [400, 700].map(async weight => {
+    const filename = `onest-latin-${weight}-normal.woff`;
+    const file = path.join(
+      path.dirname(require.resolve("@fontsource/onest")),
+      "files",
+      filename,
+    );
+    Bun.write(path.join(assets, "files", filename), await fs.readFile(file));
+  }),
+);
