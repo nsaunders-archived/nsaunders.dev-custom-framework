@@ -1,5 +1,12 @@
-import { Console, Effect, Either, Option, ReadonlyArray, pipe } from "effect";
-import { getAssetFromKV } from "@cloudflare/kv-asset-handler";
+import {
+  Console,
+  Effect,
+  Either,
+  Option,
+  ReadonlyArray,
+  Stream,
+  pipe,
+} from "effect";
 import createHttpError from "http-errors";
 import { css as hooksCSS } from "./css-hooks";
 
@@ -18,19 +25,16 @@ import ProjectsPage from "./components/ProjectsPage";
 import PostOpengraphImage from "./components/PostOpengraphImage";
 import * as PostOpengraphImageMeta from "./components/PostOpengraphImage";
 import ThemeSwitcher from "./components/ThemeSwitcher";
-
-// @ts-ignore
-import manifestJSON from "__STATIC_CONTENT_MANIFEST";
-const assetManifest = JSON.parse(manifestJSON);
-
-type Environment = {
-  __STATIC_CONTENT: unknown;
-};
+import { Assets, createAssets } from "./data/Assets";
 
 const htmlDoctype = "<!DOCTYPE html>";
 
 export default {
-  fetch(request: Request, env: Environment, ctx: ExecutionContext) {
+  fetch(
+    request: Request,
+    env: { __STATIC_CONTENT: unknown },
+    ctx: ExecutionContext,
+  ) {
     const handler = Effect.gen(function* (_) {
       const pathname = yield* _(
         Effect.try({
@@ -337,21 +341,17 @@ export default {
       }
 
       return yield* _(
-        Effect.tryPromise({
-          try: () =>
-            getAssetFromKV(
-              {
-                request,
-                waitUntil: ctx.waitUntil.bind(ctx),
-              },
-              {
-                ASSET_NAMESPACE: env.__STATIC_CONTENT,
-                ASSET_MANIFEST: assetManifest,
-              },
-            ),
-          catch: () =>
-            createHttpError(404, `No resource exists at path ${pathname}`),
-        }),
+        Assets,
+        Effect.flatMap(assets => assets.fetch(pathname)),
+        Effect.orElseFail(() =>
+          createHttpError(404, `No resource exists at path ${pathname}`),
+        ),
+        Effect.flatMap(res =>
+          pipe(
+            res.arrayBuffer,
+            Effect.map(body => new Response(body, { headers: res.headers })),
+          ),
+        ),
       );
     });
 
@@ -374,7 +374,12 @@ export default {
             onRight: Effect.succeed,
           }),
         );
-      }),
+      }).pipe(
+        Effect.provideService(
+          Assets,
+          createAssets(env, ctx.waitUntil.bind(ctx)),
+        ),
+      ),
     );
   },
 };

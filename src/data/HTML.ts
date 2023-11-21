@@ -14,6 +14,7 @@ initYoga(yogaWasm).then(Satori.init);
 // @ts-ignore
 import resvgWasm from "../../node_modules/@resvg/resvg-wasm/index_bg.wasm";
 import { initWasm } from "@resvg/resvg-wasm";
+import { Assets } from "./Assets";
 initWasm(resvgWasm);
 
 export const render = HTML.render;
@@ -41,27 +42,27 @@ export const renderImage = (
 ) =>
   pipe(
     Effect.all([
-      Effect.all(
-        ([400, 700] as const).map(weight =>
-          pipe(
-            Http.request
-              .get(
-                `http://localhost:8787/files/onest-latin-${weight}-normal.woff`,
-              )
-              .pipe(Http.client.fetchOk()),
-            Effect.flatMap(res => res.arrayBuffer),
-            Effect.mapBoth({
-              onFailure: inner => {
-                return RenderImageFontFetchError({ weight, inner });
-              },
-              onSuccess: data =>
-                ({
-                  name: "Onest",
-                  weight,
-                  style: "normal",
-                  data,
-                } as const),
-            }),
+      Assets.pipe(
+        Effect.flatMap(assets =>
+          Effect.all(
+            ([400, 700] as const).map(weight =>
+              pipe(
+                assets.fetch(`/files/onest-latin-${weight}-normal.woff`),
+                Effect.flatMap(res => res.arrayBuffer),
+                Effect.mapBoth({
+                  onFailure: inner => {
+                    return RenderImageFontFetchError({ weight, inner });
+                  },
+                  onSuccess: data =>
+                    ({
+                      name: "Onest",
+                      weight,
+                      style: "normal",
+                      data,
+                    } as const),
+                }),
+              ),
+            ),
           ),
         ),
       ),
