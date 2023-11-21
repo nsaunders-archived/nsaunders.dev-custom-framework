@@ -4,29 +4,24 @@ import createHttpError from "http-errors";
 import { css as hooksCSS } from "./css-hooks";
 
 import * as HTML from "./data/HTML";
+import * as Markdown from "./data/Markdown";
 import * as Pages from "./data/Pages";
 import * as Posts from "./data/Posts";
 import * as Projects from "./data/Projects";
 import * as Theme from "./data/Theme";
-import renderMarkdown from "./renderMarkdown";
 
 import AboutPage from "./components/AboutPage";
-import ThemeSwitcher from "./components/ThemeSwitcher";
 import HomePage from "./components/HomePage";
 import PostsPage from "./components/PostsPage";
 import PostPage from "./components/PostPage";
 import ProjectsPage from "./components/ProjectsPage";
 import PostOpengraphImage from "./components/PostOpengraphImage";
 import * as PostOpengraphImageMeta from "./components/PostOpengraphImage";
+import ThemeSwitcher from "./components/ThemeSwitcher";
 
 // @ts-ignore
 import manifestJSON from "__STATIC_CONTENT_MANIFEST";
 const assetManifest = JSON.parse(manifestJSON);
-
-// @ts-ignore
-import shikijiWasm from "../node_modules/shikiji/dist/onig.wasm";
-import * as Shikiji from "shikiji/core";
-await Shikiji.loadWasm(obj => WebAssembly.instantiate(shikijiWasm, obj));
 
 type Environment = {
   __STATIC_CONTENT: unknown;
@@ -213,7 +208,7 @@ export default {
           );
 
           const content = yield* _(
-            renderMarkdown(page.content, { pathname }),
+            Markdown.render(page.content, { pathname }),
             Effect.mapError(inner =>
               createHttpError(
                 500,
@@ -313,7 +308,7 @@ export default {
           );
 
           const content = yield* _(
-            renderMarkdown(post.content, { pathname }),
+            Markdown.render(post.content, { pathname }),
             Effect.mapError(inner =>
               createHttpError(
                 500,

@@ -1,7 +1,7 @@
 import { marked, RendererObject } from "marked";
-import A from "./components/A";
-import * as V from "./vars";
-import hooks from "./css-hooks";
+import A from "../components/A";
+import * as V from "../vars";
+import hooks from "../css-hooks";
 import * as CSS from "csstype";
 import { getHighlighterCore } from "shikiji";
 import { Data, Effect } from "effect";
@@ -14,9 +14,14 @@ import jsx from "shikiji/langs/jsx.mjs";
 import typescript from "shikiji/langs/typescript.mjs";
 import tsx from "shikiji/langs/tsx.mjs";
 import slug from "slug";
-import LinkIcon from "./components/LinkIcon";
+import LinkIcon from "../components/LinkIcon";
 import isAbsoluteURL from "is-absolute-url";
 import * as HTML from "@nsaunders/html";
+
+// @ts-ignore
+import shikijiWasm from "../../node_modules/shikiji/dist/onig.wasm";
+import * as Shikiji from "shikiji/core";
+await Shikiji.loadWasm(obj => WebAssembly.instantiate(shikijiWasm, obj));
 
 type RenderMarkdownError = Data.TaggedEnum<{
   RenderMarkdownHighlighterError: { message: string };
@@ -26,8 +31,8 @@ type RenderMarkdownError = Data.TaggedEnum<{
 const { RenderMarkdownHighlighterError, RenderMarkdownRendererError } =
   Data.taggedEnum<RenderMarkdownError>();
 
-const renderMarkdown = (content: string, { pathname }: { pathname: string }) =>
-  Effect.gen(function* (_) {
+export function render(content: string, { pathname }: { pathname: string }) {
+  return Effect.gen(function* (_) {
     const highlighter = yield* _(
       Effect.tryPromise({
         try: () =>
@@ -208,5 +213,4 @@ const renderMarkdown = (content: string, { pathname }: { pathname: string }) =>
       }),
     );
   });
-
-export default renderMarkdown;
+}
