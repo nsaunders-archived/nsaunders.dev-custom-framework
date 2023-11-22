@@ -1,12 +1,4 @@
-import {
-  Console,
-  Effect,
-  Either,
-  Option,
-  ReadonlyArray,
-  Stream,
-  pipe,
-} from "effect";
+import { Console, Effect, Either, Option, ReadonlyArray, pipe } from "effect";
 import createHttpError from "http-errors";
 import { css as hooksCSS } from "./css-hooks";
 
@@ -350,6 +342,12 @@ export default {
           pipe(
             res.arrayBuffer,
             Effect.map(body => new Response(body, { headers: res.headers })),
+          ),
+        ),
+        Effect.orElseFail(() =>
+          createHttpError(
+            500,
+            `An error occurred while reading the response for ${pathname}.`,
           ),
         ),
       );

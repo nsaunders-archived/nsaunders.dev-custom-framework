@@ -9,16 +9,16 @@ const assetManifest = JSON.parse(manifestJSON);
 export interface Assets {
   fetch(
     pathname: string,
-  ): Effect.Effect<never, FetchError, Http.response.ClientResponse>;
+  ): Effect.Effect<never, GetAssetError, Http.response.ClientResponse>;
 }
 
 export const Assets = Context.Tag<Assets>();
 
-interface FetchError extends Data.Case {
-  readonly _tag: "FetchError";
+export interface GetAssetError extends Data.Case {
+  readonly _tag: "GetAssetError";
 }
 
-const FetchError = Data.tagged<FetchError>("FetchError");
+const GetAssetError = Data.tagged<GetAssetError>("GetAssetError");
 
 export function createAssets(
   env: { __STATIC_CONTENT: unknown },
@@ -45,13 +45,13 @@ export function createAssets(
                 response,
               ),
             ),
-          catch: () => FetchError(),
+          catch: () => GetAssetError(),
         }),
         Effect.flatMap(response => {
           if (response.status === 200) {
             return Effect.succeed(response);
           }
-          return Effect.fail(FetchError());
+          return Effect.fail(GetAssetError());
         }),
       );
     },

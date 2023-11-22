@@ -1,4 +1,4 @@
-import { HttpClient as Http } from "@effect/platform-browser";
+import { Assets } from "./Assets";
 import * as HTML from "@nsaunders/html";
 import { Data, Effect, pipe } from "effect";
 import { html as htmlToVNode } from "satori-html";
@@ -14,15 +14,13 @@ initYoga(yogaWasm).then(Satori.init);
 // @ts-ignore
 import resvgWasm from "../../node_modules/@resvg/resvg-wasm/index_bg.wasm";
 import { initWasm } from "@resvg/resvg-wasm";
-import { Assets } from "./Assets";
 initWasm(resvgWasm);
 
 export const render = HTML.render;
 
 type RenderImageError = Data.TaggedEnum<{
-  RenderImageFontFetchError: {
+  RenderImageGetFontError: {
     weight: number;
-    inner: Http.error.HttpClientError;
   };
   RenderImageHTMLToVNodeError: { message: string };
   RenderImageVNodeToSVGError: { message: string };
@@ -30,7 +28,7 @@ type RenderImageError = Data.TaggedEnum<{
 }>;
 
 const {
-  RenderImageFontFetchError,
+  RenderImageGetFontError,
   RenderImageHTMLToVNodeError,
   RenderImageVNodeToSVGError,
   RenderImageSVGToPNGError,
@@ -50,9 +48,7 @@ export const renderImage = (
                 assets.fetch(`/files/onest-latin-${weight}-normal.woff`),
                 Effect.flatMap(res => res.arrayBuffer),
                 Effect.mapBoth({
-                  onFailure: inner => {
-                    return RenderImageFontFetchError({ weight, inner });
-                  },
+                  onFailure: () => RenderImageGetFontError({ weight }),
                   onSuccess: data =>
                     ({
                       name: "Onest",
