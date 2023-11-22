@@ -1,5 +1,5 @@
 import { O } from "ts-toolbelt";
-import * as V from "../vars";
+import * as V from "varsace";
 import hooks from "../css-hooks";
 import Page from "./Page";
 import { Post } from "../data/Posts";

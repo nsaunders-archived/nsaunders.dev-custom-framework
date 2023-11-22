@@ -1,5 +1,5 @@
 import { Post } from "../data/Posts";
-import * as V from "../vars";
+import * as V from "varsace";
 
 export const dimensions = {
   width: 1200,

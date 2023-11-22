@@ -1,4 +1,4 @@
-import * as V from "../vars";
+import * as V from "varsace";
 import hooks from "../css-hooks";
 import PageHeader from "./PageHeader";
 import PageFooter from "./PageFooter";

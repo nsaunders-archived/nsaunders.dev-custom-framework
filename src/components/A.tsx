@@ -1,5 +1,5 @@
 import hooks from "../css-hooks";
-import * as V from "../vars";
+import * as V from "varsace";
 import * as CSS from "csstype";
 import { O } from "ts-toolbelt";
 

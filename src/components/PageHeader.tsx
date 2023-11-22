@@ -1,4 +1,4 @@
-import * as V from "../vars";
+import * as V from "varsace";
 import hooks from "../css-hooks";
 import A from "./A";
 import ThemeSwitcher from "./ThemeSwitcher";

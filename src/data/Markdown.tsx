@@ -1,6 +1,6 @@
 import { marked, RendererObject } from "marked";
 import A from "../components/A";
-import * as V from "../vars";
+import * as V from "varsace";
 import hooks from "../css-hooks";
 import * as CSS from "csstype";
 import { getHighlighterCore } from "shikiji";

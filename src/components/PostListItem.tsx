@@ -1,7 +1,7 @@
 import { PostBrief } from "../data/Posts";
 import A from "./A";
 import hooks from "../css-hooks";
-import * as V from "../vars";
+import * as V from "varsace";
 import * as Date from "../data/Date";
 import * as ReadingTime from "../data/ReadingTime";
 

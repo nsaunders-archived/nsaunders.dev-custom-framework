@@ -1,5 +1,5 @@
 import * as CSS from "csstype";
-import * as V from "../vars";
+import * as V from "varsace";
 import hooks from "../css-hooks";
 
 export type Props = {
