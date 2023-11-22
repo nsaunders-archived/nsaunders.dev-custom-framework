@@ -11,7 +11,7 @@ export default function ({ width, height }: Props) {
   return (
     <div
       style={{
-        fontSize: `${height * 0.75}px`,
+        fontSize: `${Math.min(width, height) * 0.75}px`,
         background: `linear-gradient(0,${V.blue40},${V.blue60})`,
         width: "100%",
         height: "100%",
