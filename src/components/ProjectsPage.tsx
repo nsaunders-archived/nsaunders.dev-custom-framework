@@ -8,12 +8,16 @@ import ProjectListItem from "./ProjectListItem";
 
 export type Props = { projects: Projects } & O.Omit<
   Parameters<typeof Page>[0],
-  "children"
+  "children" | "title" | "description"
 >;
 
 export default function ({ projects, ...pageProps }: Props) {
   return (
-    <Page {...pageProps}>
+    <Page
+      {...pageProps}
+      title="Projects"
+      description="Overview of my programming projects and open-source contributions"
+    >
       <main style={{ margin: "4em" }}>
         <BlockSection>
           <ListLayout title="Projects">

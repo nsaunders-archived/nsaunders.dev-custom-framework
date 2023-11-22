@@ -15,7 +15,7 @@ import A from "./A";
 
 export type Props = {
   post: Omit<Post, "content"> & { content: JSX.Element };
-} & O.Omit<Parameters<typeof Page>[0], "children">;
+} & O.Omit<Parameters<typeof Page>[0], "children" | "title" | "description">;
 
 export default function ({
   post: {
@@ -30,7 +30,19 @@ export default function ({
   ...pageProps
 }: Props) {
   return (
-    <Page {...pageProps}>
+    <Page
+      {...pageProps}
+      title={title}
+      description={description}
+      opengraph={{
+        ...pageProps.opengraph,
+        image: `https://nsaunders.dev${pageProps.pathname}/opengraph.png`,
+      }}
+      twitter={{
+        ...pageProps.twitter,
+        card: "summary_large_image",
+      }}
+    >
       <main style={{ display: "flex", flexDirection: "column", gap: "2em" }}>
         <Jumbotron headline={title}>
           <p style={{ marginBlock: 0 }}>{description}</p>

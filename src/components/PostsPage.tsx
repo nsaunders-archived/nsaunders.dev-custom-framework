@@ -11,12 +11,16 @@ import { ReadonlyArray, pipe } from "effect";
 
 export type Props = {
   posts: Posts.Posts;
-} & O.Omit<Parameters<typeof Page>[0], "children">;
+} & O.Omit<Parameters<typeof Page>[0], "children" | "title" | "description">;
 
 export default function ({ posts: unsortedPosts, ...pageProps }: Props) {
   const posts = pipe(unsortedPosts, ReadonlyArray.sort(Posts.newestFirst));
   return (
-    <Page {...pageProps}>
+    <Page
+      {...pageProps}
+      title="Blog"
+      description="My thoughts on React, TypeScript, frontend development, and software engineering in general"
+    >
       <main
         style={{
           padding: "4rem",

@@ -15,11 +15,15 @@ import type { FeaturedProject } from "../data/Projects";
 export type Props = {
   latestPost: Posts[number] | undefined;
   featuredProject: FeaturedProject | undefined;
-} & O.Omit<Parameters<typeof Page>[0], "children">;
+} & O.Omit<Parameters<typeof Page>[0], "children" | "title" | "description">;
 
 export default function ({ latestPost, featuredProject, ...pageProps }: Props) {
   return (
-    <Page {...pageProps}>
+    <Page
+      {...pageProps}
+      title="Nick Saunders"
+      description="My technical blog and professional profile as a software engineer"
+    >
       <main style={{ display: "flex", flexDirection: "column", gap: "4em" }}>
         <Jumbotron headline="Hi there, I'm Nick.">
           <p style={{ marginBlock: 0 }}>

@@ -5,11 +5,15 @@ import BlockSection from "./BlockSection";
 
 export type Props = {
   content: JSX.Element;
-} & O.Omit<Parameters<typeof Page>[0], "children">;
+} & O.Omit<Parameters<typeof Page>[0], "children" | "title" | "description">;
 
 export default function ({ content, ...pageProps }: Props) {
   return (
-    <Page {...pageProps}>
+    <Page
+      {...pageProps}
+      title="About"
+      description="Overview of my programming journey, technical background, and guiding principles"
+    >
       <main style={{ display: "flex", flexDirection: "column", gap: "2em" }}>
         <Jumbotron
           headline={

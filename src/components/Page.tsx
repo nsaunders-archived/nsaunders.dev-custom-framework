@@ -4,15 +4,33 @@ import PageHeader from "./PageHeader";
 import PageFooter from "./PageFooter";
 
 export type Props = Parameters<typeof PageHeader>[0] & {
+  title: string;
+  description: string;
+  opengraph?: {
+    title?: string;
+    description?: string;
+    image?: string;
+    type?: "article";
+  };
+  twitter?: {
+    card?: "summary_large_image";
+  };
   children?: JSX.Node | JSX.Node[];
 };
 
-export default function ({ children, theme, pathname }: Props) {
+export default function ({
+  children,
+  description,
+  opengraph,
+  pathname,
+  twitter,
+  theme,
+  title,
+}: Props) {
   return (
     <html data-theme={theme} style={{ overflowY: "scroll" }}>
       <head>
         <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link
           rel="apple-touch-icon"
           sizes="180x180"
@@ -30,6 +48,24 @@ export default function ({ children, theme, pathname }: Props) {
           sizes="16x16"
           href="/favicon-16x16.png?"
         />
+        <title>{title} — nsaunders.dev</title>
+        <meta name="description" content={description} />
+        {Object.entries({
+          title,
+          description,
+          url: `https://nsaunders.dev${pathname}`,
+          site_name: "nsaunders.dev",
+          ...opengraph,
+        }).map(([property, content]) => (
+          <meta property={`og:${property}`} content={content} />
+        ))}
+        {Object.entries({
+          creator: "agilecoder",
+          ...twitter,
+        }).map(([property, content]) => (
+          <meta property={`twitter:${property}`} content={content} />
+        ))}
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <script src="/htmx.js" defer></script>
         <link rel="stylesheet" href="/normalize.css" />
         <link rel="stylesheet" href="/onest.css" />
