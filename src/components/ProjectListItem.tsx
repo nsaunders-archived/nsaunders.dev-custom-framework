@@ -34,7 +34,9 @@ export default function ProjectListItem({ children }: Props) {
       <A href={url} style={{ fontSize: "1.25em", fontWeight: 700 }}>
         {name}
       </A>
-      <p style={{ margin: 0, marginTop: "0.5em", flex: 1 }}>{description}</p>
+      <p style={{ margin: 0, marginTop: "0.5em", flex: 1, lineHeight: 1.5 }}>
+        {description}
+      </p>
       <div
         style={{
           display: "flex",
