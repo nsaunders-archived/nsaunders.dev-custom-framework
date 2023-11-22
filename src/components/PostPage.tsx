@@ -88,7 +88,145 @@ export default function ({
             <A href={editHref}>Suggest an edit</A>
           </div>
         </BlockSection>
+        <BlockSection>
+          <Subscribe />
+        </BlockSection>
       </main>
     </Page>
+  );
+}
+
+function Subscribe() {
+  const flex = "1 1 calc((60ch - 100%) * 999)";
+  return (
+    <section
+      style={{
+        display: "flex",
+        flexWrap: "wrap",
+      }}
+    >
+      <div
+        style={{ flex, background: V.gray05, color: V.gray80, padding: "3em" }}
+      >
+        <h1
+          style={{
+            fontSize: "2em",
+            fontWeight: 700,
+            lineHeight: 1.25,
+            marginBlock: 0,
+          }}
+        >
+          Stay informed
+        </h1>
+        <p
+          style={{
+            fontSize: "1.5em",
+            fontWeight: 400,
+            lineHeight: 1.25,
+            marginBlock: "1em",
+          }}
+        >
+          Subscribe to email updates and be the first to know when I post new
+          content.
+        </p>
+        <p
+          style={{
+            fontWeight: 400,
+            lineHeight: 1.25,
+            marginBlock: 0,
+            color: V.gray60,
+          }}
+        >
+          I hate spam as much as you do.
+          <br />
+          Unsubscribe at any time — no hard feelings!
+        </p>
+      </div>
+      <form
+        hx-boost="false"
+        style={{
+          flex,
+          background: V.gray80,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "stretch",
+          padding: "3em",
+          gap: "2em",
+        }}
+        method="POST"
+        action="https://dev.us21.list-manage.com/subscribe/post?u=1961e884a06fdad7a53bc160e&id=3f29e7fcdf&f_id=00905ce1f0"
+      >
+        {(
+          [
+            ["Email", "email", "EMAIL", true],
+            ["First name", "text", "FNAME", false],
+          ] as const
+        ).map(([label, inputType, name, required]) => (
+          <label
+            style={{ display: "flex", flexDirection: "column", gap: "0.5em" }}
+          >
+            <div style={{ lineHeight: 1 }}>{label}</div>
+            <input
+              type={inputType}
+              name={name}
+              required={required}
+              style={hooks({
+                background: V.gray05,
+                color: V.gray90,
+                font: "inherit",
+                lineHeight: 1,
+                padding: "0.5em",
+                border: 0,
+                borderRadius: "0.25em",
+                outlineWidth: 0,
+                outlineStyle: "solid",
+                outlineColor: V.blue50,
+                outlineOffset: "2px",
+                focusVisible: {
+                  outlineWidth: "2px",
+                },
+              })}
+            />
+          </label>
+        ))}
+        <div aria-hidden="true" style="position: absolute; left: -5000px;">
+          <input
+            data-desc="thwart-bots"
+            type="text"
+            name="b_1961e884a06fdad7a53bc160e_3f29e7fcdf"
+            tabindex={-1}
+          />
+        </div>
+        <button
+          type="submit"
+          style={hooks({
+            alignSelf: "center",
+            font: "inherit",
+            lineHeight: 1,
+            padding: "0.5em 0.75em",
+            margin: 0,
+            border: 0,
+            borderRadius: "0.25em",
+            background: V.blue50,
+            color: V.white,
+            outlineWidth: 0,
+            outlineStyle: "solid",
+            outlineColor: V.blue50,
+            outlineOffset: "2px",
+            focusVisible: {
+              outlineWidth: "2px",
+            },
+            hover: {
+              background: V.blue40,
+            },
+            active: {
+              background: V.red40,
+            },
+          })}
+        >
+          Subscribe
+        </button>
+      </form>
+    </section>
   );
 }
