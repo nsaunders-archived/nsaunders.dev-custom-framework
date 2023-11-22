@@ -6,13 +6,13 @@ import manifestJSON from "__STATIC_CONTENT_MANIFEST";
 import { getAssetFromKV } from "@cloudflare/kv-asset-handler";
 const assetManifest = JSON.parse(manifestJSON);
 
-export interface Assets {
-  fetch(
+export interface Asset {
+  get(
     pathname: string,
   ): Effect.Effect<never, GetAssetError, Http.response.ClientResponse>;
 }
 
-export const Assets = Context.Tag<Assets>();
+export const Asset = Context.Tag<Asset>();
 
 export interface GetAssetError extends Data.Case {
   readonly _tag: "GetAssetError";
@@ -32,12 +32,12 @@ export function printGetAssetError(error: GetAssetError) {
   )}`;
 }
 
-export function createAssets(
+export function createAsset(
   env: { __STATIC_CONTENT: unknown },
   waitUntil: (promise: Promise<unknown>) => void,
-): Assets {
+): Asset {
   return {
-    fetch(pathname) {
+    get(pathname) {
       const request = new Request("http://." + pathname);
       return pipe(
         Effect.tryPromise({

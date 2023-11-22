@@ -2,7 +2,7 @@ import { Console, Effect, Either, Option, ReadonlyArray, pipe } from "effect";
 import createHttpError from "http-errors";
 import { css as hooksCSS } from "./css-hooks";
 
-import { Assets, createAssets } from "./data/Assets";
+import { Asset, createAsset } from "./data/Asset";
 import * as DateService from "./data/Date";
 import * as HTML from "./data/HTML";
 import * as Markdown from "./data/Markdown";
@@ -454,8 +454,8 @@ export default {
       }
 
       return yield* _(
-        Assets,
-        Effect.flatMap(assets => assets.fetch(pathname)),
+        Asset,
+        Effect.flatMap(assets => assets.get(pathname)),
         Effect.orElseFail(() =>
           createHttpError(404, `No resource exists at path ${pathname}`),
         ),
@@ -494,10 +494,7 @@ export default {
           }),
         );
       }).pipe(
-        Effect.provideService(
-          Assets,
-          createAssets(env, ctx.waitUntil.bind(ctx)),
-        ),
+        Effect.provideService(Asset, createAsset(env, ctx.waitUntil.bind(ctx))),
       ),
     );
   },

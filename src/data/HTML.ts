@@ -4,7 +4,7 @@ import { html as htmlToVNode } from "satori-html";
 import satori from "satori/wasm";
 import { Resvg } from "@resvg/resvg-wasm";
 import * as HTML from "@nsaunders/html";
-import { Assets, GetAssetError, printGetAssetError } from "./Assets";
+import { Asset, GetAssetError, printGetAssetError } from "./Asset";
 
 // @ts-ignore
 import yogaWasm from "../../node_modules/yoga-wasm-web/dist/yoga.wasm";
@@ -96,12 +96,12 @@ export const renderImage = (
 ) =>
   pipe(
     Effect.all([
-      Assets.pipe(
-        Effect.flatMap(assets =>
+      Asset.pipe(
+        Effect.flatMap(asset =>
           Effect.all(
             options.fonts.map(([family, weight]) =>
               pipe(
-                assets.fetch(`/files/${family}-latin-${weight}-normal.woff`),
+                asset.get(`/files/${family}-latin-${weight}-normal.woff`),
                 Effect.flatMap(res => res.arrayBuffer),
                 Effect.mapBoth({
                   onFailure: cause =>
