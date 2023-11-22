@@ -37,10 +37,6 @@ export default function ({ children, theme, pathname }: Props) {
         <link rel="stylesheet" href="/inconsolata.css" />
         <link rel="stylesheet" href="/global.css" />
         <link rel="stylesheet" href="/hooks.css" />
-        <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css"
-        />
       </head>
       <body
         hx-boost="true"
