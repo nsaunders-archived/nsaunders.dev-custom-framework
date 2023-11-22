@@ -259,11 +259,21 @@ export default {
         if (Option.isSome(postName)) {
           const name = postName.value;
 
+          const post = yield* _(
+            Posts.getByName(name),
+            Effect.orElseFail(() =>
+              createHttpError(
+                500,
+                `An error occurred while fetching post "${name}".`,
+              ),
+            ),
+          );
+
           if (Option.isSome(postResource)) {
             if (postResource.value === "opengraph.png") {
               return yield* _(
                 HTML.renderImage(
-                  <PostOpengraphImage />,
+                  <PostOpengraphImage post={post} />,
                   PostOpengraphImageMeta.dimensions,
                 ),
                 Effect.mapBoth({
@@ -292,16 +302,6 @@ export default {
               },
             });
           }
-
-          const post = yield* _(
-            Posts.getByName(name),
-            Effect.orElseFail(() =>
-              createHttpError(
-                500,
-                `An error occurred while fetching post "${name}".`,
-              ),
-            ),
-          );
 
           const content = yield* _(
             Markdown.render(post.content, { pathname }),
