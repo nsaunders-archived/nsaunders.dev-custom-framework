@@ -83,6 +83,7 @@ export function render(content: string, { pathname }: { pathname: string }) {
           return HTML.render(
             <div
               style={hooks({
+                overflow: "auto",
                 background: V.gray05,
                 dark: { background: V.gray85 },
               })}
