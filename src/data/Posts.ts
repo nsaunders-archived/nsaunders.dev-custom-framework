@@ -2,7 +2,7 @@ import { HttpClient as Http } from "@effect/platform-browser";
 import * as S from "@effect/schema/Schema";
 import { Effect, Option, Order, ReadonlyArray, pipe } from "effect";
 import matter from "front-matter";
-import { GeneralParseError, NotFoundError } from "./errors";
+import { GeneralParseError, NotFoundError } from "./Errors";
 
 const Posts = S.array(
   S.struct({
