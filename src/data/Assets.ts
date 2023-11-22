@@ -1,4 +1,4 @@
-import { Context, Data, Effect, pipe } from "effect";
+import { Context, Data, Effect, Either, identity, pipe } from "effect";
 import { HttpClient as Http } from "@effect/platform-browser";
 
 // @ts-ignore
@@ -16,9 +16,21 @@ export const Assets = Context.Tag<Assets>();
 
 export interface GetAssetError extends Data.Case {
   readonly _tag: "GetAssetError";
+  readonly pathname: string;
+  readonly result: Either.Either<string, number>;
 }
 
 const GetAssetError = Data.tagged<GetAssetError>("GetAssetError");
+
+export function printGetAssetError(error: GetAssetError) {
+  return `Failed to retrieve asset ${error.pathname}. ${Either.match(
+    error.result,
+    {
+      onLeft: identity,
+      onRight: status => `Unexpected response status ${status}.`,
+    },
+  )}`;
+}
 
 export function createAssets(
   env: { __STATIC_CONTENT: unknown },
@@ -45,13 +57,28 @@ export function createAssets(
                 response,
               ),
             ),
-          catch: () => GetAssetError(),
+          catch: error =>
+            GetAssetError({
+              pathname,
+              result:
+                error &&
+                typeof error === "object" &&
+                "message" in error &&
+                typeof error.message === "string"
+                  ? Either.left(error.message)
+                  : Either.left("Unknown request failure."),
+            }),
         }),
         Effect.flatMap(response => {
           if (response.status === 200) {
             return Effect.succeed(response);
           }
-          return Effect.fail(GetAssetError());
+          return Effect.fail(
+            GetAssetError({
+              pathname,
+              result: Either.right(response.status),
+            }),
+          );
         }),
       );
     },

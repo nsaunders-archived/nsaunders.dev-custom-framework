@@ -33,7 +33,19 @@ export default function ({ theme, pathname }: Props) {
         })}
         selected
       >
-        Nick Saunders
+        <img
+          src="/favicon-32x32.png"
+          alt="Nick Saunders"
+          style={hooks({
+            width: "32px",
+            height: "32px",
+            display: "none",
+            small: { display: "unset" },
+          })}
+        />
+        <span style={hooks({ display: "inline", small: { display: "none" } })}>
+          Nick Saunders
+        </span>
       </A>
       <div style={{ flex: 1 }} />
       <>

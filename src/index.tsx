@@ -2,6 +2,7 @@ import { Console, Effect, Either, Option, ReadonlyArray, pipe } from "effect";
 import createHttpError from "http-errors";
 import { css as hooksCSS } from "./css-hooks";
 
+import { Assets, createAssets } from "./data/Assets";
 import * as HTML from "./data/HTML";
 import * as Markdown from "./data/Markdown";
 import * as Pages from "./data/Pages";
@@ -11,13 +12,14 @@ import * as Theme from "./data/Theme";
 
 import AboutPage from "./components/AboutPage";
 import HomePage from "./components/HomePage";
+import Icon from "./components/Icon";
+import * as IconMeta from "./components/Icon";
 import PostsPage from "./components/PostsPage";
 import PostPage from "./components/PostPage";
 import ProjectsPage from "./components/ProjectsPage";
 import PostOpengraphImage from "./components/PostOpengraphImage";
 import * as PostOpengraphImageMeta from "./components/PostOpengraphImage";
 import ThemeSwitcher from "./components/ThemeSwitcher";
-import { Assets, createAssets } from "./data/Assets";
 
 const htmlDoctype = "<!DOCTYPE html>";
 
@@ -35,6 +37,36 @@ export default {
             createHttpError(400, `Invalid request URL ${request.url}`),
         }),
       );
+
+      const faviconMatch = Array.from(
+        pathname.match(
+          /\/(apple-touch-icon|(favicon|android-chrome)-([0-9]+)x([0-9]+))\.png$/,
+        ) || [],
+      )
+        .slice(3)
+        .map(x => parseInt(x) || 180);
+      if (faviconMatch.length === 2) {
+        const [width, height] = faviconMatch as [number, number];
+        return yield* _(
+          HTML.renderImage(<Icon width={width} height={height} />, {
+            ...IconMeta,
+            width,
+            height,
+          }),
+          Effect.mapBoth({
+            onFailure: error =>
+              createHttpError(
+                500,
+                "An error occurred while rendering the image.",
+                { inner: HTML.printRenderImageError(error) },
+              ),
+            onSuccess: content =>
+              new Response(content, {
+                headers: { "Content-Type": "image/png" },
+              }),
+          }),
+        );
+      }
 
       if (pathname === "/theme") {
         if (!/^post$/i.test(request.method)) {
@@ -274,7 +306,7 @@ export default {
               return yield* _(
                 HTML.renderImage(
                   <PostOpengraphImage post={post} />,
-                  PostOpengraphImageMeta.dimensions,
+                  PostOpengraphImageMeta,
                 ),
                 Effect.mapBoth({
                   onFailure(cause) {

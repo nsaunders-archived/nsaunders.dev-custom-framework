@@ -1,9 +1,10 @@
-import { Assets } from "./Assets";
-import * as HTML from "@nsaunders/html";
-import { Data, Effect, pipe } from "effect";
+import { Data, Effect, Match, Option, pipe } from "effect";
+import { HttpClient as Http } from "@effect/platform-browser";
 import { html as htmlToVNode } from "satori-html";
 import satori from "satori/wasm";
 import { Resvg } from "@resvg/resvg-wasm";
+import * as HTML from "@nsaunders/html";
+import { Assets, GetAssetError, printGetAssetError } from "./Assets";
 
 // @ts-ignore
 import yogaWasm from "../../node_modules/yoga-wasm-web/dist/yoga.wasm";
@@ -20,11 +21,13 @@ export const render = HTML.render;
 
 type RenderImageError = Data.TaggedEnum<{
   RenderImageGetFontError: {
+    family: string;
     weight: number;
+    cause: Http.error.ResponseError | GetAssetError;
   };
-  RenderImageHTMLToVNodeError: { message: string };
-  RenderImageVNodeToSVGError: { message: string };
-  RenderImageSVGToPNGError: { message: string };
+  RenderImageHTMLToVNodeError: { cause: Option.Option<Error> };
+  RenderImageVNodeToSVGError: { cause: Option.Option<Error> };
+  RenderImageSVGToPNGError: { cause: Option.Option<Error> };
 }>;
 
 const {
@@ -34,24 +37,78 @@ const {
   RenderImageSVGToPNGError,
 } = Data.taggedEnum<RenderImageError>();
 
+export const printRenderImageError = Match.type<RenderImageError>().pipe(
+  Match.tag(
+    "RenderImageGetFontError",
+    ({ family, weight, cause }) =>
+      `Unable to retrieve font ${family}/${weight} while rendering the image. ${pipe(
+        cause,
+        Match.type<Http.error.ResponseError | GetAssetError>().pipe(
+          Match.tag(
+            "ResponseError",
+            ({ reason }) => `Encountered a response error (${reason}).`,
+          ),
+          Match.tag("GetAssetError", printGetAssetError),
+          Match.exhaustive,
+        ),
+      )}`,
+  ),
+  Match.tag(
+    "RenderImageHTMLToVNodeError",
+    ({ cause }) =>
+      `Unable to convert HTML to VNode.${pipe(
+        cause,
+        Option.map(e => ` ${e.message}`),
+        Option.getOrElse(() => ""),
+      )}`,
+  ),
+  Match.tag(
+    "RenderImageVNodeToSVGError",
+    ({ cause }) =>
+      `Unable to convert VNode to SVG.${pipe(
+        cause,
+        Option.map(e => ` ${e.message}`),
+        Option.getOrElse(() => ""),
+      )}`,
+  ),
+  Match.tag(
+    "RenderImageSVGToPNGError",
+    ({ cause }) =>
+      `Unable to convert SVG to PNG.${pipe(
+        cause,
+        Option.map(e => ` ${e.message}`),
+        Option.getOrElse(() => ""),
+      )}`,
+  ),
+  Match.exhaustive,
+);
+
 export const renderImage = (
   jsx: JSX.Element,
-  options: { width: number; height: number },
+  options: {
+    width: number;
+    height: number;
+    fonts: readonly (
+      | readonly ["onest", 400 | 700]
+      | readonly ["montserrat", 400]
+    )[];
+  },
 ) =>
   pipe(
     Effect.all([
       Assets.pipe(
         Effect.flatMap(assets =>
           Effect.all(
-            ([400, 700] as const).map(weight =>
+            options.fonts.map(([family, weight]) =>
               pipe(
-                assets.fetch(`/files/onest-latin-${weight}-normal.woff`),
+                assets.fetch(`/files/${family}-latin-${weight}-normal.woff`),
                 Effect.flatMap(res => res.arrayBuffer),
                 Effect.mapBoth({
-                  onFailure: () => RenderImageGetFontError({ weight }),
+                  onFailure: cause =>
+                    RenderImageGetFontError({ weight, family, cause }),
                   onSuccess: data =>
                     ({
-                      name: "Onest",
+                      name: family.replace(/^[a-z]/, x => x.toUpperCase()),
                       weight,
                       style: "normal",
                       data,
@@ -65,9 +122,9 @@ export const renderImage = (
       Effect.try({
         try: () => htmlToVNode(HTML.render(jsx)),
         catch: e =>
-          RenderImageHTMLToVNodeError(
-            e instanceof Error ? e : { message: "Unknown failure" },
-          ),
+          RenderImageHTMLToVNodeError({
+            cause: e instanceof Error ? Option.some(e) : Option.none(),
+          }),
       }),
     ]),
     Effect.flatMap(([fonts, vnode]) =>
@@ -78,18 +135,18 @@ export const renderImage = (
             fonts,
           }),
         catch: e =>
-          RenderImageVNodeToSVGError(
-            e instanceof Error ? e : { message: "Unknown failure" },
-          ),
+          RenderImageVNodeToSVGError({
+            cause: e instanceof Error ? Option.some(e) : Option.none(),
+          }),
       }),
     ),
     Effect.flatMap(svg =>
       Effect.try({
         try: () => new Resvg(svg).render().asPng(),
         catch: e =>
-          RenderImageSVGToPNGError(
-            e instanceof Error ? e : { message: "Unknown failure" },
-          ),
+          RenderImageSVGToPNGError({
+            cause: e instanceof Error ? Option.some(e) : Option.none(),
+          }),
       }),
     ),
   );

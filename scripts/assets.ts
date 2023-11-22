@@ -59,10 +59,14 @@ await Promise.all(
 );
 
 await Promise.all(
-  [400, 700].map(async weight => {
-    const filename = `onest-latin-${weight}-normal.woff`;
+  [
+    ["onest", 400],
+    ["onest", 700],
+    ["montserrat", 400],
+  ].map(async ([family, weight]) => {
+    const filename = `${family}-latin-${weight}-normal.woff`;
     const file = path.join(
-      path.dirname(require.resolve("@fontsource/onest")),
+      path.dirname(require.resolve(`@fontsource/${family}`)),
       "files",
       filename,
     );

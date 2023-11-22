@@ -1,10 +1,11 @@
 import { Post } from "../data/Posts";
 import * as V from "varsace";
 
-export const dimensions = {
-  width: 1200,
-  height: 630,
-};
+export const width = 1200;
+
+export const height = 630;
+
+export const fonts = [["onest", 400]] as const;
 
 export default function ({ post: { title, description } }: { post: Post }) {
   return (
@@ -18,7 +19,6 @@ export default function ({ post: { title, description } }: { post: Post }) {
         flexDirection: "column",
         alignItems: "flex-start",
         justifyContent: "space-between",
-        fontFamily: "'Onest', sans-serif",
         fontSize: "24px",
         color: V.white,
       }}

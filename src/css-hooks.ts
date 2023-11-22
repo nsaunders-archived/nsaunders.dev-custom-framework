@@ -15,6 +15,7 @@ const [css, hooks] = createHooks({
       },
     ],
   },
+  small: "@media (max-width: 640px)",
 });
 
 export default hooks;
