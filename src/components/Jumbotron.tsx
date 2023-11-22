@@ -4,7 +4,7 @@ import BlockSection from "./BlockSection";
 
 export type Props = {
   headline?: JSX.Node;
-  children?: JSX.Node | JSX.Node[];
+  children?: JSX.Nodes;
 };
 
 export default function ({ headline, children }: Props) {
@@ -13,41 +13,25 @@ export default function ({ headline, children }: Props) {
       style={hooks({
         background: V.gray05,
         fontSize: "1.5em",
-        padding: "2em",
+        padding: "1em 0 2em 0",
         dark: {
           background: V.gray80,
         },
       })}
     >
       <BlockSection>
-        <div
+        <h1
           style={hooks({
-            background: V.white,
-            padding: "1em",
-            margin: "-1em",
-            display: "flex",
-            flexDirection: "column",
-            gap: "0.5em",
-            dark: {
-              background: "transparent",
-              padding: 0,
-              margin: 0,
-            },
+            color: V.purple50,
+            dark: { color: V.orange20 },
+            fontSize: "1.6em",
+            fontWeight: 400,
+            margin: 0,
           })}
         >
-          <h1
-            style={hooks({
-              color: V.purple50,
-              dark: { color: V.orange20 },
-              fontSize: "1.6em",
-              fontWeight: 400,
-              margin: 0,
-            })}
-          >
-            {headline}
-          </h1>
-          {children}
-        </div>
+          {headline}
+        </h1>
+        {children}
       </BlockSection>
     </section>
   );

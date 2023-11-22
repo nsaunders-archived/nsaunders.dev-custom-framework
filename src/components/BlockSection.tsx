@@ -2,7 +2,7 @@ import * as CSS from "csstype";
 
 export type Props = {
   style?: CSS.Properties;
-  children?: JSX.Node | JSX.Node[];
+  children?: JSX.Nodes;
 };
 
 export default function BlockSection({ children, style }: Props) {
