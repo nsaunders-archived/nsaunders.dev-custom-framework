@@ -3,12 +3,14 @@ import createHttpError from "http-errors";
 import { css as hooksCSS } from "./css-hooks";
 
 import { Assets, createAssets } from "./data/Assets";
+import * as DateService from "./data/Date";
 import * as HTML from "./data/HTML";
 import * as Markdown from "./data/Markdown";
 import * as Pages from "./data/Pages";
 import * as Posts from "./data/Posts";
 import * as Projects from "./data/Projects";
 import * as Theme from "./data/Theme";
+import { toXML } from "jstoxml";
 
 import AboutPage from "./components/AboutPage";
 import HomePage from "./components/HomePage";
@@ -37,6 +39,93 @@ export default {
             createHttpError(400, `Invalid request URL ${request.url}`),
         }),
       );
+
+      if (pathname === "/rss.xml") {
+        return yield* _(
+          Posts.list(),
+          Effect.mapError(() =>
+            createHttpError(500, "Failed fetching the list of posts."),
+          ),
+          Effect.flatMap(posts =>
+            Effect.try({
+              try: () => {
+                return toXML(
+                  {
+                    _name: "rss",
+                    _attrs: {
+                      version: "2.0",
+                      "xmlns:dc": "http://purl.org/dc/elements/1.1/",
+                      "xmlns:content":
+                        "http://purl.org/rss/1.0/modules/content/",
+                      "xmlns:atom": "http://www.w3.org/2005/Atom",
+                    },
+                    _content: {
+                      channel: [
+                        [
+                          {
+                            title: "Blog — nsaunders.dev",
+                            description:
+                              "Nick Saunders technical blog, focused on React, TypeScript, and frontend development",
+                            link: "https://nsaunders.dev",
+                            image: {
+                              url: "https://github.com/nsaunders.png",
+                              title: "nsaunders.dev",
+                              link: "https://nsaunders.dev",
+                            },
+                            lastBuildDate: DateService.formatRFC822(new Date()),
+                            "atom:link": {
+                              _attrs: {
+                                href: "https://nsaunders.dev/rss.xml",
+                                rel: "self",
+                                type: "application/rss+xml",
+                              },
+                            },
+                          },
+                        ],
+                        ...posts.map(
+                          ({ title, description, name, published }) => ({
+                            item: [
+                              {
+                                title,
+                                description,
+                                link: `https://nsaunders.dev/posts/${name}`,
+                                pubDate: DateService.formatRFC822(published),
+                              },
+                              {
+                                _name: "guid",
+                                _attrs: {
+                                  isPermaLink: "true",
+                                },
+                                _content: `https://nsaunders.dev/posts/${name}`,
+                              },
+                            ],
+                          }),
+                        ),
+                      ],
+                    },
+                  },
+                  { header: true, indent: "  " },
+                );
+              },
+              catch: error =>
+                createHttpError(
+                  500,
+                  "The XML library generated an error unexpectedly.",
+                  {
+                    cause:
+                      error instanceof Error ? error.message : "Unknown cause",
+                  },
+                ),
+            }),
+          ),
+          Effect.map(
+            content =>
+              new Response(content, {
+                headers: { "Content-Type": "text/xml" },
+              }),
+          ),
+        );
+      }
 
       const faviconMatch = Array.from(
         pathname.match(

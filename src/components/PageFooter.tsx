@@ -25,7 +25,7 @@ export default function PageFooter({ style }: Props) {
       <A href="https://github.com/nsaunders">GitHub</A>
       <A href="https://linkedin.com/in/nicksaunders">LinkedIn</A>
       <div style={{ flex: 1 }} />
-      <A href="https://linkedin.com/in/nicksaunders">RSS</A>
+      <A href="/rss.xml">RSS</A>
     </footer>
   );
 }
