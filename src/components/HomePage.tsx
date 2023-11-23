@@ -55,7 +55,7 @@ export default function ({ latestPost, featuredProject, ...pageProps }: Props) {
                         style={{
                           display: "grid",
                           gridTemplateColumns:
-                            "repeat(auto-fit, minmax(32ch, 1fr))",
+                            "repeat(auto-fit, minmax(min(32ch, 100%), 1fr))",
                           gap: "2em",
                         }}
                       >
