@@ -1,21 +1,24 @@
 import { format as formatImpl } from "date-fns";
 
-export function format(date: Date) {
-  try {
-    return formatImpl(date, "MMM d, yyyy");
-  } catch (e) {
-    return `Invalid date: ${
-      e &&
-      typeof e === "object" &&
-      "message" in e &&
-      typeof e.message === "string"
-        ? e.message
-        : "Unknown failure"
-    }`;
-  }
+function withFallback(f: (d: Date) => string): (d: Date) => string {
+  return function (d) {
+    try {
+      return f(d);
+    } catch {
+      try {
+        return d.toISOString();
+      } catch {
+        return "Invalid date";
+      }
+    }
+  };
 }
 
-export function formatRFC822(date: Date) {
+export const formatLongDate = withFallback(date =>
+  formatImpl(date, "MMM d, yyyy"),
+);
+
+export const formatRFC822 = withFallback(date => {
   const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const months = [
     "Jan",
@@ -49,4 +52,4 @@ export function formatRFC822(date: Date) {
       : date.getUTCSeconds();
 
   return `${dayOfWeek}, ${day} ${month} ${year} ${hours}:${minutes}:${seconds} GMT`;
-}
+});

@@ -65,7 +65,7 @@ export default function ({
                   <ScreenReaderOnly>Posted date</ScreenReaderOnly>
                 </>
               }
-              value={Date.format(published)}
+              value={Date.formatLongDate(published)}
             />
             <LabelValuePair
               label={

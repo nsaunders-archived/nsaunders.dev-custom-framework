@@ -31,7 +31,7 @@ export default function PostListItem({
           },
         })}
       >
-        <span>{Date.format(published)}</span>
+        <span>{Date.formatLongDate(published)}</span>
         <span>{ReadingTime.format(readingTime)}</span>
       </div>
       <A href={`/posts/${name}`} style={{ fontSize: "2em" }}>
