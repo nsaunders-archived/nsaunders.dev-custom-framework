@@ -6,8 +6,8 @@ import { Asset, createAsset } from "./data/Asset";
 import * as DateService from "./data/Date";
 import * as HTML from "./data/HTML";
 import * as Markdown from "./data/Markdown";
-import * as Pages from "./data/Pages";
-import * as Posts from "./data/Posts";
+import * as Page from "./data/Page";
+import * as Post from "./data/Post";
 import * as Project from "./data/Project";
 import * as Theme from "./data/Theme";
 import { toXML } from "jstoxml";
@@ -42,9 +42,11 @@ export default {
 
       if (pathname === "/rss.xml") {
         return yield* _(
-          Posts.list(),
-          Effect.mapError(() =>
-            createHttpError(500, "Failed fetching the list of posts."),
+          Post.list(),
+          Effect.mapError(error =>
+            createHttpError(500, "Failed fetching the list of posts.", {
+              cause: Post.printListError(error),
+            }),
           ),
           Effect.flatMap(posts =>
             Effect.try({
@@ -235,12 +237,12 @@ export default {
             Effect.all(
               [
                 pipe(
-                  Posts.list(),
+                  Post.list(),
                   Effect.mapError(error =>
                     createHttpError(
                       500,
                       "An error occurred while listing posts.",
-                      { cause: Project.printListError(error) },
+                      { cause: Post.printListError(error) },
                     ),
                   ),
                 ),
@@ -261,7 +263,7 @@ export default {
 
           const latestPost = pipe(
             posts,
-            ReadonlyArray.sort(Posts.newestFirst),
+            ReadonlyArray.sort(Post.newestFirst),
             Option.fromIterable,
           );
 
@@ -314,12 +316,12 @@ export default {
 
         if (pathname === "/about") {
           const page = yield* _(
-            Pages.getByName("about"),
-            Effect.mapError(inner =>
+            Page.getByName("about"),
+            Effect.mapError(error =>
               createHttpError(
                 500,
                 "An error occurred while fetching the about page content.",
-                { inner },
+                { cause: Page.printGetByNameError(error) },
               ),
             ),
           );
@@ -357,9 +359,11 @@ export default {
 
         if (pathname === "/posts") {
           const posts = yield* _(
-            Posts.list(),
-            Effect.orElseFail(() =>
-              createHttpError(500, "An error occurred while listing posts."),
+            Post.list(),
+            Effect.mapError(error =>
+              createHttpError(500, "An error occurred while listing posts.", {
+                cause: Post.printListError(error),
+              }),
             ),
           );
 
@@ -384,11 +388,12 @@ export default {
           const name = postName.value;
 
           const post = yield* _(
-            Posts.getByName(name),
-            Effect.orElseFail(() =>
+            Post.getByName(name),
+            Effect.mapError(error =>
               createHttpError(
                 500,
                 `An error occurred while fetching post "${name}".`,
+                { cause: Post.printGetByNameError(error) },
               ),
             ),
           );

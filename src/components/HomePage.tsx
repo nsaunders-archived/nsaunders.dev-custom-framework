@@ -9,7 +9,7 @@ import PostListItem from "./PostListItem";
 import hooks from "../css-hooks";
 import ProjectListItem from "./ProjectListItem";
 import A from "./A";
-import type { Posts } from "../data/Posts";
+import type { Posts } from "../data/Post";
 import type { FeaturedProject } from "../data/Project";
 
 export type Props = {

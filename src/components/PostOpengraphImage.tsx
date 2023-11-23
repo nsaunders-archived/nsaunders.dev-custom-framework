@@ -1,4 +1,4 @@
-import { Post } from "../data/Posts";
+import { Post } from "../data/Post";
 import * as V from "varsace";
 
 export const width = 1200;

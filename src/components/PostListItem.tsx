@@ -1,4 +1,4 @@
-import { PostBrief } from "../data/Posts";
+import { PostBrief } from "../data/Post";
 import A from "./A";
 import hooks from "../css-hooks";
 import * as V from "varsace";

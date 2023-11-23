@@ -1,6 +1,6 @@
 import { O } from "ts-toolbelt";
 import * as V from "varsace";
-import * as Posts from "../data/Posts";
+import * as Posts from "../data/Post";
 import Page from "./Page";
 import PostListItem from "./PostListItem";
 import hooks from "../css-hooks";

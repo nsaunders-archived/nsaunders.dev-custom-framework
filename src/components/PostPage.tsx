@@ -2,7 +2,7 @@ import { O } from "ts-toolbelt";
 import * as V from "varsace";
 import hooks from "../css-hooks";
 import Page from "./Page";
-import { Post } from "../data/Posts";
+import { Post } from "../data/Post";
 import Jumbotron from "./Jumbotron";
 import BlockSection from "./BlockSection";
 import CalendarIcon from "./CalendarIcon";
