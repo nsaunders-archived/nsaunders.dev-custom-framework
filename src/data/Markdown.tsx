@@ -4,7 +4,7 @@ import * as V from "varsace";
 import hooks from "../css-hooks";
 import * as CSS from "csstype";
 import { getHighlighterCore } from "shikiji";
-import { Data, Effect, flow, Match, pipe } from "effect";
+import { Data, Effect, Match, pipe } from "effect";
 import githubDark from "shikiji/themes/github-dark.mjs";
 import githubLight from "shikiji/themes/github-light.mjs";
 import css from "shikiji/langs/css.mjs";
@@ -24,17 +24,17 @@ import * as Shikiji from "shikiji/core";
 import { Option } from "effect";
 await Shikiji.loadWasm(obj => WebAssembly.instantiate(shikijiWasm, obj));
 
-type RenderMarkdownError = Data.TaggedEnum<{
-  RenderMarkdownHighlighterError: { cause: Option.Option<Error> };
-  RenderMarkdownRendererError: { cause: Option.Option<Error> };
+type RenderError = Data.TaggedEnum<{
+  RenderHighlighterError: { cause: Option.Option<Error> };
+  RenderRendererError: { cause: Option.Option<Error> };
 }>;
 
-const { RenderMarkdownHighlighterError, RenderMarkdownRendererError } =
-  Data.taggedEnum<RenderMarkdownError>();
+const { RenderHighlighterError, RenderRendererError } =
+  Data.taggedEnum<RenderError>();
 
-export const printRenderMarkdownError = Match.type<RenderMarkdownError>().pipe(
+export const printRenderError = Match.type<RenderError>().pipe(
   Match.tag(
-    "RenderMarkdownHighlighterError",
+    "RenderHighlighterError",
     ({ cause }) =>
       `Syntax highlighter failure.${pipe(
         cause,
@@ -43,7 +43,7 @@ export const printRenderMarkdownError = Match.type<RenderMarkdownError>().pipe(
       )}`,
   ),
   Match.tag(
-    "RenderMarkdownRendererError",
+    "RenderRendererError",
     ({ cause }) =>
       `Markdown engine failure.${pipe(
         cause,
@@ -64,7 +64,7 @@ export function render(content: string, { pathname }: { pathname: string }) {
             langs: [css, html, javascript, jsx, typescript, tsx],
           }),
         catch: error =>
-          RenderMarkdownHighlighterError({
+          RenderHighlighterError({
             cause: error instanceof Error ? Option.some(error) : Option.none(),
           }),
       }),
@@ -231,7 +231,7 @@ export function render(content: string, { pathname }: { pathname: string }) {
           />
         ),
         catch: error =>
-          RenderMarkdownRendererError({
+          RenderRendererError({
             cause: error instanceof Error ? Option.some(error) : Option.none(),
           }),
       }),

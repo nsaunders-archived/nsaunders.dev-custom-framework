@@ -332,7 +332,7 @@ export default {
                 "An error occurred while rendering the markdown content as HTML.",
                 {
                   content: page.content,
-                  cause: Markdown.printRenderMarkdownError(error),
+                  cause: Markdown.printRenderError(error),
                 },
               ),
             ),
