@@ -17,9 +17,16 @@ export default function ({ headline, children }: Props) {
         dark: {
           background: V.gray80,
         },
+        display: "flex",
       })}
     >
-      <BlockSection>
+      <BlockSection
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "1em",
+        }}
+      >
         <h1
           style={hooks({
             color: V.purple50,

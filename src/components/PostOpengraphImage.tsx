@@ -20,6 +20,7 @@ export default function ({ post: { title, description } }: { post: Post }) {
         alignItems: "flex-start",
         justifyContent: "space-between",
         fontSize: "24px",
+        lineHeight: 1.25,
         color: V.white,
       }}
     >
@@ -27,7 +28,7 @@ export default function ({ post: { title, description } }: { post: Post }) {
         style={{
           display: "flex",
           flexDirection: "column",
-          gap: "calc(2em / 3)",
+          gap: "0.666em",
         }}
       >
         <div style={{ fontSize: "2em" }}>{title}</div>

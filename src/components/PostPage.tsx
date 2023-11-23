@@ -51,7 +51,7 @@ export default function ({
               display: "flex",
               gap: "2em",
               fontSize: "0.75em",
-              marginTop: "2em",
+              marginTop: "1em",
               color: V.gray60,
               dark: {
                 color: V.gray30,
