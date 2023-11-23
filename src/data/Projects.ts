@@ -2,7 +2,7 @@ import * as cheerio from "cheerio";
 import { Effect, Option } from "effect";
 import * as S from "@effect/schema/Schema";
 import { HttpClient as Http } from "@effect/platform-browser";
-import { GeneralParseError } from "./Errors";
+import { GeneralParseError } from "./Error";
 
 const username = "nsaunders";
 
