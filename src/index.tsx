@@ -326,11 +326,14 @@ export default {
 
           const content = yield* _(
             Markdown.render(page.content, { pathname }),
-            Effect.mapError(inner =>
+            Effect.mapError(error =>
               createHttpError(
                 500,
                 "An error occurred while rendering the markdown content as HTML.",
-                { content: page.content, inner },
+                {
+                  content: page.content,
+                  cause: Markdown.printRenderMarkdownError(error),
+                },
               ),
             ),
           );

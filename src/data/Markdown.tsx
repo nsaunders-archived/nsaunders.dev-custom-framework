@@ -4,7 +4,7 @@ import * as V from "varsace";
 import hooks from "../css-hooks";
 import * as CSS from "csstype";
 import { getHighlighterCore } from "shikiji";
-import { Data, Effect } from "effect";
+import { Data, Effect, flow, Match, pipe } from "effect";
 import githubDark from "shikiji/themes/github-dark.mjs";
 import githubLight from "shikiji/themes/github-light.mjs";
 import css from "shikiji/langs/css.mjs";
@@ -21,15 +21,38 @@ import * as HTML from "@nsaunders/html";
 // @ts-ignore
 import shikijiWasm from "../../node_modules/shikiji/dist/onig.wasm";
 import * as Shikiji from "shikiji/core";
+import { Option } from "effect";
 await Shikiji.loadWasm(obj => WebAssembly.instantiate(shikijiWasm, obj));
 
 type RenderMarkdownError = Data.TaggedEnum<{
-  RenderMarkdownHighlighterError: { message: string };
-  RenderMarkdownRendererError: { message: string };
+  RenderMarkdownHighlighterError: { cause: Option.Option<Error> };
+  RenderMarkdownRendererError: { cause: Option.Option<Error> };
 }>;
 
 const { RenderMarkdownHighlighterError, RenderMarkdownRendererError } =
   Data.taggedEnum<RenderMarkdownError>();
+
+export const printRenderMarkdownError = Match.type<RenderMarkdownError>().pipe(
+  Match.tag(
+    "RenderMarkdownHighlighterError",
+    ({ cause }) =>
+      `Syntax highlighter failure.${pipe(
+        cause,
+        Option.map(error => ` ${error.message}`),
+        Option.getOrElse(() => ""),
+      )}`,
+  ),
+  Match.tag(
+    "RenderMarkdownRendererError",
+    ({ cause }) =>
+      `Markdown engine failure.${pipe(
+        cause,
+        Option.map(error => ` ${error.message}`),
+        Option.getOrElse(() => ""),
+      )}`,
+  ),
+  Match.exhaustive,
+);
 
 export function render(content: string, { pathname }: { pathname: string }) {
   return Effect.gen(function* (_) {
@@ -41,9 +64,9 @@ export function render(content: string, { pathname }: { pathname: string }) {
             langs: [css, html, javascript, jsx, typescript, tsx],
           }),
         catch: error =>
-          RenderMarkdownHighlighterError(
-            error instanceof Error ? error : { message: "Unknown failure" },
-          ),
+          RenderMarkdownHighlighterError({
+            cause: error instanceof Error ? Option.some(error) : Option.none(),
+          }),
       }),
     );
 
@@ -208,9 +231,9 @@ export function render(content: string, { pathname }: { pathname: string }) {
           />
         ),
         catch: error =>
-          RenderMarkdownRendererError(
-            error instanceof Error ? error : { message: "Unknown failure" },
-          ),
+          RenderMarkdownRendererError({
+            cause: error instanceof Error ? Option.some(error) : Option.none(),
+          }),
       }),
     );
   });
