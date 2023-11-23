@@ -10,7 +10,7 @@ import hooks from "../css-hooks";
 import ProjectListItem from "./ProjectListItem";
 import A from "./A";
 import type { Posts } from "../data/Posts";
-import type { FeaturedProject } from "../data/Projects";
+import type { FeaturedProject } from "../data/Project";
 
 export type Props = {
   latestPost: Posts[number] | undefined;

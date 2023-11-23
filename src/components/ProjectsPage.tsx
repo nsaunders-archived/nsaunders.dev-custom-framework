@@ -1,6 +1,6 @@
 import { O } from "ts-toolbelt";
 import Page from "./Page";
-import { Projects } from "../data/Projects";
+import { Projects } from "../data/Project";
 import BlockSection from "./BlockSection";
 import ListItemEmphasis from "./ListItemEmphasis";
 import ListLayout from "./ListLayout";

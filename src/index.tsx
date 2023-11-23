@@ -8,7 +8,7 @@ import * as HTML from "./data/HTML";
 import * as Markdown from "./data/Markdown";
 import * as Pages from "./data/Pages";
 import * as Posts from "./data/Posts";
-import * as Projects from "./data/Projects";
+import * as Project from "./data/Project";
 import * as Theme from "./data/Theme";
 import { toXML } from "jstoxml";
 
@@ -236,21 +236,21 @@ export default {
               [
                 pipe(
                   Posts.list(),
-                  Effect.mapError(inner =>
+                  Effect.mapError(error =>
                     createHttpError(
                       500,
                       "An error occurred while listing posts.",
-                      { inner },
+                      { cause: Project.printListError(error) },
                     ),
                   ),
                 ),
                 pipe(
-                  Projects.getFeatured(),
-                  Effect.mapError(inner =>
+                  Project.getFeatured(),
+                  Effect.mapError(error =>
                     createHttpError(
                       500,
                       "An error occurred while getting the featured project.",
-                      { inner },
+                      { cause: Project.printGetFeaturedError(error) },
                     ),
                   ),
                 ),
@@ -285,12 +285,12 @@ export default {
 
         if (pathname === "/projects") {
           const projects = yield* _(
-            Projects.list(),
-            Effect.mapError(inner =>
+            Project.list(),
+            Effect.mapError(error =>
               createHttpError(
                 500,
                 "An error occurred while listing projects.",
-                { inner },
+                { cause: Project.printListError(error) },
               ),
             ),
           );

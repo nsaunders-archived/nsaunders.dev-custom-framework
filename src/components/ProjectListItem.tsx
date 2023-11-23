@@ -1,5 +1,5 @@
 import A from "./A";
-import { Projects } from "../data/Projects";
+import { Projects } from "../data/Project";
 import StarIcon from "./StarIcon";
 import ForkIcon from "./ForkIcon";
 import hooks from "../css-hooks";

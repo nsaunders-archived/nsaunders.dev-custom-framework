@@ -1,8 +1,9 @@
 import * as cheerio from "cheerio";
-import { Effect, Option } from "effect";
+import { Effect, Match, Option } from "effect";
 import * as S from "@effect/schema/Schema";
 import { HttpClient as Http } from "@effect/platform-browser";
-import { GeneralParseError } from "./Error";
+import { GeneralParseError, printGeneralParseError } from "./Error";
+import { ParseError } from "@effect/schema/ParseResult";
 
 const username = "nsaunders";
 
@@ -19,6 +20,25 @@ const Projects = S.array(
 );
 
 export type Projects = S.Schema.To<typeof Projects>;
+
+export const printListError = Match.type<
+  Http.error.HttpClientError | GeneralParseError | ParseError
+>().pipe(
+  Match.tag(
+    "RequestError",
+    error => `Request for ${error.request.url} failed (${error.reason}).`,
+  ),
+  Match.tag(
+    "ResponseError",
+    error => `Response for ${error.request.url} failed (${error.reason}).`,
+  ),
+  Match.tag("GeneralParseError", error => printGeneralParseError(error)),
+  Match.tag(
+    "ParseError",
+    ({ errors }) => `Parse error${errors.length === 1 ? "" : "s"}.`,
+  ),
+  Match.exhaustive,
+);
 
 export const list = () =>
   Http.request.get(`https://github.com/${username}`).pipe(
@@ -65,7 +85,7 @@ export const list = () =>
         catch(e) {
           return GeneralParseError({
             input,
-            message: e instanceof Error ? e.message : "Unknown failure",
+            cause: e instanceof Error ? Option.some(e) : Option.none(),
           });
         },
       }),
@@ -89,6 +109,8 @@ const getStory = ({ owner, name }: { owner: string; name: string }) =>
         }
       }),
     );
+
+export const printGetFeaturedError = printListError;
 
 export type FeaturedProject = Projects[number] & { story: string };
 
