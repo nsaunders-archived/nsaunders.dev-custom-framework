@@ -1,9 +1,6 @@
-name = "preview-nsaunders-dev"
+name = "nsaunders-dev"
 main = "src/index.tsx"
 compatibility_date = "2023-07-01"
 
 [site]
 bucket = "./assets"
-
-[env.production]
-name = "nsaunders-dev"
