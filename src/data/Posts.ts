@@ -49,7 +49,7 @@ const getPostContent = (name: string) =>
           },
           catch(e) {
             return GeneralParseError({
-              message: e instanceof Error ? e.message : "Unknown failure",
+              cause: e instanceof Error ? Option.some(e) : Option.none(),
               input,
             });
           },
