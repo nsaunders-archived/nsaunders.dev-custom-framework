@@ -102,24 +102,17 @@ export type Post = Effect.Effect.Success<ReturnType<typeof getByName>>;
 
 export const getByName = (name: string) =>
   pipe(
-    Effect.all(
-      [
-        pipe(
-          list(),
-          Effect.map(ReadonlyArray.findFirst(post => post.name === name)),
-          Effect.flatMap(
-            Option.match({
-              onNone: () =>
-                Effect.fail(
-                  NotFoundError({ description: `post named "${name}"` }),
-                ),
-              onSome: Effect.succeed,
-            }),
-          ),
-        ),
-        getContent(name),
-      ],
-      { concurrency: "unbounded" },
+    list(),
+    Effect.map(ReadonlyArray.findFirst(post => post.name === name)),
+    Effect.flatMap(
+      Option.match({
+        onNone: () =>
+          Effect.fail(NotFoundError({ description: `post named "${name}"` })),
+        onSome: Effect.succeed,
+      }),
+    ),
+    Effect.flatMap(post =>
+      Effect.map(getContent(name), content => [post, content] as const),
     ),
     Effect.map(([post, content]) => ({
       ...post,

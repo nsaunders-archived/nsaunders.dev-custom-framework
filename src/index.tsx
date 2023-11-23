@@ -1,4 +1,13 @@
-import { Console, Effect, Either, Option, ReadonlyArray, pipe } from "effect";
+import {
+  Console,
+  Effect,
+  Either,
+  Match,
+  Option,
+  ReadonlyArray,
+  flow,
+  pipe,
+} from "effect";
 import createHttpError from "http-errors";
 import { css as hooksCSS } from "./css-hooks";
 
@@ -389,11 +398,21 @@ export default {
 
           const post = yield* _(
             Post.getByName(name),
-            Effect.mapError(error =>
-              createHttpError(
-                500,
-                `An error occurred while fetching post "${name}".`,
-                { cause: Post.printGetByNameError(error) },
+            Effect.mapError(
+              flow(
+                Match.type<
+                  Effect.Effect.Error<ReturnType<typeof Post.getByName>>
+                >().pipe(
+                  Match.tag(
+                    "NotFoundError",
+                    error => [404, true, error] as const,
+                  ),
+                  Match.orElse(error => [500, false, error] as const),
+                ),
+                ([status, expose, error]) =>
+                  createHttpError(status, Post.printGetByNameError(error), {
+                    expose,
+                  }),
               ),
             ),
           );
@@ -482,28 +501,33 @@ export default {
       );
     });
 
-    return Effect.runPromise(
-      Effect.gen(function* (_) {
-        const result = yield* _(Effect.either(handler));
-        return yield* _(
-          Either.match(result, {
-            onLeft: error =>
-              Effect.gen(function* (_) {
-                if (error.expose) {
-                  return new Response(error.message, { status: error.status });
-                }
-                yield* _(Console.error(error));
-                return new Response(
-                  "I'm sorry, but I'm unable to fulfill your request due to an error. It's not your fault. Please try again.",
-                  { status: 500 },
-                );
-              }),
-            onRight: Effect.succeed,
-          }),
-        );
-      }).pipe(
-        Effect.provideService(Asset, createAsset(env, ctx.waitUntil.bind(ctx))),
+    return pipe(
+      handler,
+      Effect.provideService(Asset, createAsset(env, ctx.waitUntil.bind(ctx))),
+      Effect.either,
+      Effect.flatMap(
+        Either.match({
+          onLeft: error => {
+            if (error.expose) {
+              return Effect.succeed(
+                new Response(error.message, { status: error.status }),
+              );
+            }
+            return pipe(
+              Console.error(error),
+              Effect.map(
+                () =>
+                  new Response(
+                    "I'm sorry, but I'm unable to fulfill your request due to an error. It's not your fault. Please try again.",
+                    { status: 500 },
+                  ),
+              ),
+            );
+          },
+          onRight: Effect.succeed,
+        }),
       ),
+      Effect.runPromise,
     );
   },
 };
