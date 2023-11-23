@@ -4,6 +4,7 @@
   "scripts": {
     "postinstall": "bun run scripts/assets.ts",
     "dev": "SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt wrangler dev --live-reload",
+    "dev-remote": "wrangler dev --remote",
     "test": "tsc --noEmit"
   },
   "dependencies": {
