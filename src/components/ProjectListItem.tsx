@@ -40,6 +40,7 @@ export default function ProjectListItem({ children }: Props) {
       <div
         style={{
           display: "flex",
+          flexWrap: "wrap",
           alignItems: "center",
           gap: "1.25em",
           marginTop: "2em",
