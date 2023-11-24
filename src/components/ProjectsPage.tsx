@@ -26,13 +26,19 @@ export default function ({ projects, ...pageProps }: Props) {
                 listStyleType: "none",
                 margin: 0,
                 padding: 0,
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(32ch,1fr))",
+                display: "flex",
+                flexWrap: "wrap",
                 gap: "1.5em",
               }}
             >
               {projects.map(project => (
-                <li style={{ display: "grid" }}>
+                <li
+                  style={{
+                    display: "grid",
+                    minWidth: "40%",
+                    flex: "1 1 calc((60ch - 100%) * 999)",
+                  }}
+                >
                   <ListItemEmphasis>
                     <ProjectListItem>{project}</ProjectListItem>
                   </ListItemEmphasis>
