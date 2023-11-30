@@ -147,6 +147,7 @@ function Subscribe() {
         style={{
           flex,
           background: V.gray80,
+          color: V.white,
           display: "flex",
           flexDirection: "column",
           alignItems: "stretch",
